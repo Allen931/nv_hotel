@@ -41,7 +41,6 @@ public class CheckInRoomControl {
 			exception.getDetailMessages().add(e.getMessage());
 			exception.getDetailMessages().addAll(e.getDetailMessages());
 			throw exception;
-
 		}
 		catch (RoomException e) {
 			AppException exception = new AppException("Failed to check-in", e);
