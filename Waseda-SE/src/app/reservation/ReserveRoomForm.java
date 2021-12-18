@@ -17,6 +17,8 @@ public class ReserveRoomForm {
 
 	private Date stayingDate;
 
+	private String reservationNumber;
+
 	private ReserveRoomControl getReserveRoomHandler() {
 		return reserveRoomHandler;
 	}
@@ -24,6 +26,11 @@ public class ReserveRoomForm {
 	public String submitReservation() throws AppException {
 		ReserveRoomControl reserveRoomHandler = getReserveRoomHandler();
 		return reserveRoomHandler.makeReservation(stayingDate);
+	}
+
+	public void cancelReservation() throws AppException {
+		ReserveRoomControl reserveRoomHandler = getReserveRoomHandler();
+		reserveRoomHandler.cancelReservation(reservationNumber);
 	}
 
 	public Date getStayingDate() {
@@ -34,4 +41,11 @@ public class ReserveRoomForm {
 		this.stayingDate = stayingDate;
 	}
 
+	public void setReservationNumber(String reservationNumber) {
+		this.reservationNumber = reservationNumber;
+	}
+
+	public String getReservationNumber() {
+		return reservationNumber;
+	}
 }
