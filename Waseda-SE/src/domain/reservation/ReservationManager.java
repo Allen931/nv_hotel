@@ -68,6 +68,7 @@ public class ReservationManager {
             exception.getDetailMessages().add("reservation_number[" + reservationNumber + "]");
             throw exception;
         } else if (reservation.getStatus().equals(Reservation.RESERVATION_STATUS_CANCEL)) {
+            //If reservation has been cancelled already
             ReservationException exception = new ReservationException(
                     ReservationException.CODE_RESERVATION_ALREADY_CANCELLED);
             exception.getDetailMessages().add("reservation_number[" + reservationNumber + "]");
