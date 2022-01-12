@@ -1,4 +1,5 @@
 package com.hotel.reservation.entity
 
-class Room {
+class Hotel {
+    constructor()
 }
