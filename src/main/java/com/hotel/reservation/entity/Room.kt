@@ -20,6 +20,6 @@ open class Room(
     @Column(nullable = false)
     open var costPerNight: Int,
 
-    @OneToMany(mappedBy = "room")
-    open var reservations: MutableList<Reservation>,
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    open val reservations: MutableList<Reservation> = ArrayList(),
 ) {}

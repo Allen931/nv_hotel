@@ -34,5 +34,5 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Autowired lateinit var userDetailService: StoredUserDetailsService
-    @Bean open fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+    @Bean fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 }

@@ -34,6 +34,6 @@ open class Reservation(
     @Enumerated(EnumType.STRING)
     open var status: ReservationStatusType = ReservationStatusType.Pending,
 
-    @OneToMany(mappedBy = "reservation")
-    open var payments: MutableList<Payment>,
+    @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
+    open val payments: MutableList<Payment> = ArrayList(),
 ) {}
