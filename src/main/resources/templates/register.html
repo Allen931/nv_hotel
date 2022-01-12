@@ -1,0 +1,15 @@
+<html>
+<body>
+
+<div th:if="${error}">
+    Invalid username and password.
+</div>
+
+<form th:action="@{/register}" th:object="${user}" method="POST">
+    <div><label> Name : <input type="text" name="name" th:field="*{name}"/> </label></div>
+    <div><label> Login Name : <input type="text" name="loginName" th:field="*{loginName}"/> </label></div>
+    <div><label> Password: <input type="password" name="password" th:field="*{password}"/> </label></div>
+    <div><input type="submit" value="Register"/></div>
+</form>
+</body>
+</html>

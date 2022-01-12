@@ -1,7 +1,9 @@
 package com.hotel.reservation.controller
 
+import com.hotel.reservation.security.UserPrincipal
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.GetMapping
+import java.security.Principal
 
 @RestController
 class IndexController {
@@ -11,7 +13,7 @@ class IndexController {
     }
 
     @GetMapping("/secure")
-    fun testSecure(): String {
-        return "Hello World secured!!"
+    fun testSecure(principal: Principal): String {
+        return "Hello World to ${principal.name} !!"
     }
 }

@@ -21,7 +21,6 @@ open class User(
     @Column(nullable = false)
     open var admin: Boolean
 ) {
-    constructor() : this(null, "", "", "", false) {}
     constructor(name: String, loginName: String, passwordHash: String)
             : this(null, name, loginName, passwordHash, false) {}
 }
