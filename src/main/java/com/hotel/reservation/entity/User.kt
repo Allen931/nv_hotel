@@ -19,7 +19,7 @@ open class User(
     open var passwordHash: String,
 
     @Column(nullable = false)
-    open var admin: Boolean
+    open var admin: Boolean,
 ) {
     constructor(name: String, loginName: String, passwordHash: String)
             : this(null, name, loginName, passwordHash, false) {}
