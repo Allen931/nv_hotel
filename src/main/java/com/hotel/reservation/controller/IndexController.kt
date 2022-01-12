@@ -9,4 +9,9 @@ class IndexController {
     fun index(): String {
         return "Hello World!!"
     }
+
+    @GetMapping("/secure")
+    fun testSecure(): String {
+        return "Hello World secured!!"
+    }
 }

@@ -17,6 +17,8 @@ dependencies {
 	compileOnly 'javax:javaee-api:8.0.1'
 	runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.6.2'
 	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.2'
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.6.2'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.6.2'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0'
 }
 
