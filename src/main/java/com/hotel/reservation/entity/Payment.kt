@@ -6,23 +6,23 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "payments")
-class Payment(
+open class Payment(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private val id: Int,
+    open val id: Int,
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private val reservation: Reservation,
+    open val reservation: Reservation,
 
     @Column(nullable = false)
-    var amount: Int,
+    open var amount: Int,
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private val paymentTime: Date,
+    open val paymentTime: Date,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var status: PaymentStatusType = PaymentStatusType.Pending,
+    open var status: PaymentStatusType = PaymentStatusType.Pending,
 ) {}

@@ -8,18 +8,18 @@ import javax.persistence.*
 open class Room(
     @Id
     @Column(nullable = false)
-    var roomNumber: Int,
+    open var roomNumber: Int,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var type: RoomType,
+    open var type: RoomType,
 
     @Column(nullable = false)
-    var beds: Int,
+    open var beds: Int,
 
     @Column(nullable = false)
-    var costPerNight: Int,
+    open var costPerNight: Int,
 
     @OneToMany(mappedBy = "room")
-    var reservations: Collection<Reservation>,
+    open var reservations: MutableList<Reservation>,
 ) {}

@@ -6,34 +6,34 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "reservations")
-class Reservation(
+open class Reservation(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private val id: Int,
+    open val id: Int,
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private val user: User,
+    open val user: User,
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private val room: Room,
+    open val room: Room,
 
     @Column(nullable = false)
-    var cost: Int,
-
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private val checkInTime: Date,
+    open var cost: Int,
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private val checkOutTime: Date,
+    open val checkInTime: Date,
+
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    open val checkOutTime: Date,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var status: ReservationStatusType = ReservationStatusType.Pending,
+    open var status: ReservationStatusType = ReservationStatusType.Pending,
 
     @OneToMany(mappedBy = "reservation")
-    var payments: Collection<Payment>,
+    open var payments: MutableList<Payment>,
 ) {}
