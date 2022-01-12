@@ -1,24 +1,31 @@
 package com.hotel.reservation.configuration
 
+import com.hotel.reservation.security.StoredUserDetailsService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
-import kotlin.Throws
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.provisioning.InMemoryUserDetailsManager
-import java.lang.Exception
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
+
 
 @Configuration
 @EnableWebSecurity
 open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
+        http.csrf().disable()
+        http.headers().frameOptions().disable()
+
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
+                .antMatchers("/h2/**").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .formLogin()
@@ -29,13 +36,6 @@ open class WebSecurityConfig : WebSecurityConfigurerAdapter() {
                 .permitAll()
     }
 
-    @Bean
-    public override fun userDetailsService(): UserDetailsService {
-        val user = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build()
-        return InMemoryUserDetailsManager(user)
-    }
+    @Autowired lateinit var userDetailService: StoredUserDetailsService
+    @Bean open fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 }

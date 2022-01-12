@@ -1,3 +1,6 @@
+hoteldb.mv.db
+hoteldb.trace.db
+
 .gradle
 **/build/
 !src/**/build/
