@@ -20,7 +20,7 @@ open class Payment(
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    open val paymentTime: Date,
+    open var paymentTime: Date? = null,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

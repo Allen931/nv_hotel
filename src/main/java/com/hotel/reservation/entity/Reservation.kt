@@ -17,18 +17,18 @@ open class Reservation(
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    open val room: Room,
+    open var room: Room,
 
     @Column(nullable = false)
     open var cost: Int,
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    open val checkInTime: Date,
+    open var checkInTime: Date,
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    open val checkOutTime: Date,
+    open var checkOutTime: Date,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

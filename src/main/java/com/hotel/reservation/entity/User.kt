@@ -7,7 +7,7 @@ import javax.persistence.*
 open class User(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    open var id: Int? = null,
+    open val id: Int? = null,
 
     @Column(nullable = false)
     open var name: String,
