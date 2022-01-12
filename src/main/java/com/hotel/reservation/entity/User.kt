@@ -1,5 +1,6 @@
 package com.hotel.reservation.entity
 
+import com.hotel.reservation.type.UserPermissionType
 import javax.persistence.*
 
 @Entity
@@ -18,12 +19,15 @@ open class User(
     @Column(nullable = false)
     open var passwordHash: String,
 
+//    @Column(nullable = false)
+//    open var admin: Boolean,
+
     @Column(nullable = false)
-    open var admin: Boolean,
+    open var permission: UserPermissionType,
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     open val reservations: MutableList<Reservation> = ArrayList(),
 ) {
-    constructor(name: String, loginName: String, passwordHash: String)
-            : this(null, name, loginName, passwordHash, false) {}
+    constructor(name: String, loginName: String, passwordHash: String, permission: UserPermissionType = UserPermissionType.CUSTOMER)
+            : this(null, name, loginName, passwordHash, permission) {}
 }

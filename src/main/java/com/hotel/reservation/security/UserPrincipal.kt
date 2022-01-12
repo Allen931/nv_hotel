@@ -9,11 +9,12 @@ class UserPrincipal (
     var user: User
 ) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        if (user.admin) {
-            return AuthorityUtils.createAuthorityList("USER", "ADMIN")
-        } else {
-            return AuthorityUtils.createAuthorityList("USER")
-        }
+//        if (user.admin) {
+//            return AuthorityUtils.createAuthorityList("USER", "ADMIN")
+//        } else {
+//            return AuthorityUtils.createAuthorityList("USER")
+//        }
+        return AuthorityUtils.createAuthorityList("USER", user.permission.name)
     }
 
     override fun getPassword(): String = user.passwordHash
