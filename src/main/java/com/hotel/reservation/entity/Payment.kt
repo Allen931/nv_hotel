@@ -5,7 +5,7 @@ import java.util.Date
 import javax.persistence.*
 
 @Entity
-@Table(name = "payment")
+@Table(name = "payments")
 class Payment(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
