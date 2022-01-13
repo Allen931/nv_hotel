@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
 class UserService {
     @Autowired private lateinit var userRepository: UserRepository
     @Autowired private lateinit var passwordEncoder: PasswordEncoder
 
+    @Transactional
     fun register(userDto: UserDto): User {
         if (userRepository.findByLoginName(userDto.loginName) !== null) {
             throw UserAlreadyExistsException()

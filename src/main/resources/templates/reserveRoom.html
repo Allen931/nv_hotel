@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserve Room</title>
+</head>
+<body>
+
+<form th:object="${reservation}" method="POST">
+    <div><label> Check In : <input type="datetime-local" th:field="*{checkInTime}"/> </label></div>
+    <div><label> Check Out: <input type="datetime-local" th:field="*{checkOutTime}"/> </label></div>
+    <div><input type="submit" value="Register"/></div>
+</form>
+
+</body>
+</html>

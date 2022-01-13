@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Availability</title>
+</head>
+<body>
+<form method="GET">
+    <div><label> Check In : <input type="datetime-local" name="checkInTime" th:value="${#request.getParameter('checkInTime')}"/> </label></div>
+    <div><label> Check Out: <input type="datetime-local" name="checkOutTime" th:value="${#request.getParameter('checkOutTime')}"/> </label></div>
+    <div><input type="submit" value="Search"/></div>
+</form>
+
+<table>
+    <th:block th:each="room : ${rooms}">
+        <td th:text="${room.roomNumber}"></td>
+    </th:block>
+</table>
+</body>
+</html>

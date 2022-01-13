@@ -19,18 +19,18 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
         http.csrf().disable()
         http.headers().frameOptions().disable()
 
-        http
-                .authorizeRequests()
-                .antMatchers("/", "/register").permitAll()
-                .antMatchers("/h2/**").permitAll()
-                .anyRequest().authenticated()
-            .and()
-                .formLogin()
-                .loginPage("/login")
-                .permitAll()
-            .and()
-                .logout()
-                .permitAll()
+       http
+            /*.authorizeRequests()
+            .antMatchers("/", "/register").permitAll()
+            .antMatchers("/h2/"+"**").permitAll()
+            .anyRequest().authenticated()
+        .and()*/
+            .formLogin()
+            .loginPage("/login")
+            //.permitAll()
+        .and()
+            .logout()
+            //.permitAll()
     }
 
     @Autowired lateinit var userDetailService: StoredUserDetailsService

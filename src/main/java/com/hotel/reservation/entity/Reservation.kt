@@ -1,15 +1,16 @@
 package com.hotel.reservation.entity
 
 import com.hotel.reservation.type.ReservationStatusType
+import com.hotel.reservation.type.UserPermissionType
 import java.util.Date
 import javax.persistence.*
 
 @Entity
-@Table(name = "reservations")
+@Table(name = "reservations", indexes = [Index(columnList = "checkInTime, checkOutTime")])
 open class Reservation(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    open val id: Int,
+    open val id: Int? = null,
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -36,4 +37,7 @@ open class Reservation(
 
     @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY)
     open val payments: MutableList<Payment> = ArrayList(),
-) {}
+) {
+    constructor(user: User, room: Room, cost: Int, checkInTime: Date, checkOutTime: Date)
+            : this(null, user, room, cost, checkInTime, checkOutTime) {}
+}

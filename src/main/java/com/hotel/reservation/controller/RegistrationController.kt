@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import javax.validation.Valid
+import javax.servlet.http.HttpServletRequest
 
 @Controller
 class RegistrationController {
@@ -18,10 +19,11 @@ class RegistrationController {
 
     @RequestMapping("/register")
     fun register(
-        @ModelAttribute("user") @Valid userDto: UserDto?,
-        model: ModelMap
+        @ModelAttribute("user") @Valid userDto: UserDto,
+        model: ModelMap,
+        request: HttpServletRequest
     ): ModelAndView {
-        if (userDto !== null) {
+        if (request.method == "POST") {
             try {
                 val user = userService.register(userDto)
                 return ModelAndView("redirect:/secure", model)
@@ -30,7 +32,6 @@ class RegistrationController {
             }
         }
 
-        model.addAttribute("user", userDto)
         return ModelAndView("register", model)
     }
 }
