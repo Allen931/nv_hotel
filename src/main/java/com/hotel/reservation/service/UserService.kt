@@ -8,14 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
+import javax.validation.Valid
 
 @Service
+@Validated
 class UserService {
     @Autowired private lateinit var userRepository: UserRepository
     @Autowired private lateinit var passwordEncoder: PasswordEncoder
 
     @Transactional
-    fun register(userDto: UserDto): User {
+    fun register(@Valid userDto: UserDto): User {
         if (userRepository.findByLoginName(userDto.loginName) !== null) {
             throw UserAlreadyExistsException()
         }

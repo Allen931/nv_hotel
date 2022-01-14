@@ -1,6 +1,7 @@
 package com.hotel.reservation.controller
 
 import com.hotel.reservation.dto.ReservationDto
+import com.hotel.reservation.entity.User
 import com.hotel.reservation.repository.ReservationRepository
 import com.hotel.reservation.repository.RoomRepository
 import com.hotel.reservation.security.SecurityContext
@@ -9,8 +10,10 @@ import com.hotel.reservation.type.RoomType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.lang.Exception
 import java.util.Date
@@ -43,7 +46,7 @@ class ReservationController {
     @Secured
     fun reserveRoom(
         @PathVariable roomType: RoomType,
-        @ModelAttribute("reservation") @Valid reservationDto: ReservationDto,
+        @ModelAttribute("reservation") reservationDto: ReservationDto,
         request: HttpServletRequest
     ): String {
         if (request.method == "POST") {
@@ -55,6 +58,20 @@ class ReservationController {
         }
 
         return "reserveRoom"
+    }
+
+    @GetMapping("/reservation/show")
+    @Secured
+    fun showReservation(
+        @RequestParam("user") user: User?,
+        model: Model
+    ): String {
+        if (user != null) {
+            val currentUser = securityContext.currentUser
+            if (currentUser != null && user == currentUser)
+                model.addAttribute("reservations", user.reservations)
+        }
+        return "showReservation"
     }
 
 }

@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class PaymentAdminController {
     @Autowired private lateinit var paymentRepository: PaymentRepository
-    @Autowired private lateinit var reservationRepository: ReservationRepository
 
-    @PostMapping("/admin/payment/pay")
+    @PostMapping("/admin/payment/pay/{payment}")
     fun pay(
         @PathVariable payment: Payment,
         @RequestParam("creditCardNumber") creditCardNumber: String
@@ -22,6 +21,20 @@ class PaymentAdminController {
         }
         // TODO
         payment.status = PaymentStatusType.Paid
+        paymentRepository.save(payment)
+        return mapOf("success" to true)
+    }
+
+    @PostMapping("/admin/payment/refund/{payment}")
+    fun refund(
+        @PathVariable payment: Payment,
+        @RequestParam("creditCardNumber") creditCardNumber: String
+    ): Map<String, Boolean> {
+        if (payment.status != PaymentStatusType.Paid) {
+            throw IllegalArgumentException("Payment status should be paid")
+        }
+        // TODO
+        payment.status = PaymentStatusType.Refunded
         paymentRepository.save(payment)
         return mapOf("success" to true)
     }

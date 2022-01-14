@@ -15,18 +15,21 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 import java.time.Duration
 import java.time.ZoneId
 import java.util.Date
+import javax.validation.Valid
 import kotlin.random.Random
 
 @Service
+@Validated
 class RoomService {
     @Autowired private lateinit var roomRepository: RoomRepository
     @Autowired private lateinit var reservationRepository: ReservationRepository
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    fun reserveRoom(user: User, roomType: RoomType, reservationDto: ReservationDto) : Reservation {
+    fun reserveRoom(user: User, roomType: RoomType, @Valid reservationDto: ReservationDto) : Reservation {
         if (reservationDto.room != null && reservationDto.room.type != roomType) {
             throw IllegalArgumentException("Room type does not match specified room");
         }
