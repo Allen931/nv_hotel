@@ -1,22 +1,50 @@
 package com.hotel.reservation.controller
 
-import com.hotel.reservation.repository.ReservationRepository
-import com.hotel.reservation.repository.RoomRepository
-import com.hotel.reservation.security.UserPrincipal
+import com.hotel.reservation.dto.UserDto
+import com.hotel.reservation.exception.UserAlreadyExistsException
+import com.hotel.reservation.security.SecurityContext
+import com.hotel.reservation.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
-import java.security.Principal
+import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.RequestMapping
+import javax.servlet.http.HttpServletRequest
 
-@RestController
+@Controller
 class IndexController {
+    @Autowired private lateinit var userService: UserService
+    @Autowired private lateinit var securityContext: SecurityContext
+
     @GetMapping("/")
     fun index(): String {
-        return "Hello World!!"
+        return "index"
     }
 
-    @GetMapping("/secure")
-    fun testSecure(principal: Principal): String {
-        return "Hello World to ${principal.name} !!"
+    @GetMapping("/login")
+    fun login(): String {
+        if (securityContext.currentUser != null)
+            return "redirect:/reservation/show"
+
+        return "login"
+    }
+
+    @RequestMapping("/register")
+    fun register(
+        @ModelAttribute("user") userDto: UserDto,
+        model: Model,
+        request: HttpServletRequest
+    ): String {
+        if (request.method == "POST") {
+            try {
+                val user = userService.register(userDto)
+                return "redirect:/login"
+            } catch (e: UserAlreadyExistsException) {
+                model.addAttribute("error", "User already exists!")
+            }
+        }
+
+        return "register"
     }
 }

@@ -28,6 +28,7 @@ class ReservationService {
     @Autowired private lateinit var roomRepository: RoomRepository
     @Autowired private lateinit var reservationRepository: ReservationRepository
     @Autowired private lateinit var roomService: RoomService
+    @Autowired private lateinit var paymentService: PaymentService
 
     @Transactional
     fun reserveRoom(user: User, roomType: RoomType, @Valid reservationDto: ReservationDto) : Reservation {
@@ -71,12 +72,14 @@ class ReservationService {
         reservationRepository.save(reservation)
     }
 
+    @Transactional
     fun cancelReservation(reservation: Reservation) {
-        if (reservation.status != ReservationStatusType.Cancelled) {
-            reservation.status = ReservationStatusType.Cancelled
-        } else {
+        if (reservation.status == ReservationStatusType.Cancelled) {
             throw ReservationAlreadyCancelledException()
         }
+
+        reservation.status = ReservationStatusType.Cancelled
+        reservation.payments.map { paymentService.refundPayment(it) }
     }
 
     private fun assignRoom(roomType: RoomType, checkInTime: Date, checkOutTime: Date) : Room? {

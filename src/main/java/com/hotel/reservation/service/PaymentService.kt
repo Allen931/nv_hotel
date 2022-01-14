@@ -18,12 +18,15 @@ import javax.validation.constraints.Min
 class PaymentService {
     @Autowired private lateinit var paymentRepository: PaymentRepository
 
-    fun createPayment(reservation: Reservation, @Min(value = 1) amount: Int) {
+    fun createPayment(reservation: Reservation, @Min(value = 1) amount: Int) : Payment {
         if (reservation.status == ReservationStatusType.Cancelled || reservation.status == ReservationStatusType.Completed) {
             throw IllegalArgumentException("Cancelled or completed reservations cannot be paid")
         }
 
+        val payment = Payment(reservation, amount)
+        paymentRepository.save(payment)
 
+        return payment
     }
 
     fun processPayment(payment: Payment, creditCardNumber: String?) {
