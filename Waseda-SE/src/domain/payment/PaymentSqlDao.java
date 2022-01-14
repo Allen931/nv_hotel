@@ -13,7 +13,7 @@ import java.util.Date;
 import util.DateUtil;
 
 /**
- * DB SQL implementation of Payment Data Object interface<br>
+ * DB SQL implementation of Payment Data Object interface
  * 
  */
 public class PaymentSqlDao implements PaymentDao {
@@ -136,13 +136,6 @@ public class PaymentSqlDao implements PaymentDao {
 		}
 	}
 
-	/**
-	 * データベースコネクションを取得します。<br>
-	 * 
-	 * @return コネクション
-	 * @throws PaymentException
-	 *            データベースコネクション取得が失敗した場合に発生します。
-	 */
 	private Connection getConnection() throws PaymentException {
 		Connection connection = null;
 		try {

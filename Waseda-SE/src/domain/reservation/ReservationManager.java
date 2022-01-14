@@ -49,6 +49,11 @@ public class ReservationManager {
                     ReservationException.CODE_RESERVATION_ALREADY_CONSUMED);
             exception.getDetailMessages().add("reservation_number[" + reservationNumber + "]");
             throw exception;
+        } else if (reservation.getStatus().equals(Reservation.RESERVATION_STATUS_CANCEL)) {
+            ReservationException exception = new ReservationException(
+                    ReservationException.CODE_RESERVATION_ALREADY_CANCELLED);
+            exception.getDetailMessages().add("reservation_number[" + reservationNumber + "]");
+            throw exception;
         }
 
         Date stayingDate = reservation.getStayingDate();

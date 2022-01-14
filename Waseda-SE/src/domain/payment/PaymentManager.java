@@ -9,13 +9,13 @@ import util.DateUtil;
 import domain.DaoFactory;
 
 /**
- * Manager for payments<br>
+ * Manager for payments
  * 
  */
 public class PaymentManager {
 
 	/**
-	 * Fee per one night<br>
+	 * Fee per one night
 	 */
 	private static final int RATE_PER_DAY = 8000;
 

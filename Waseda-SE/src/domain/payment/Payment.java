@@ -6,7 +6,7 @@ package domain.payment;
 import java.util.Date;
 
 /**
- * Payment entity<br>
+ * Payment entity
  * 
  */
 public class Payment {

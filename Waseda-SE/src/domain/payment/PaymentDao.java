@@ -6,8 +6,8 @@ package domain.payment;
 import java.util.Date;
 
 /**
- * Interface for accessing to Payment Data Object<br>
- * 
+ * Interface for accessing to Payment Data Object
+ *
  */
 public interface PaymentDao {
 
