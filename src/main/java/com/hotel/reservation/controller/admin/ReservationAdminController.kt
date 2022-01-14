@@ -19,11 +19,6 @@ class ReservationAdminController {
     @PostMapping("/admin/reservation/checkIn/{reservation}")
     @Secured
     fun checkIn(@PathVariable reservation: Reservation): Map<String, Boolean> {
-        val user = securityContext.currentUser ?: throw IllegalArgumentException()
-        if (user.permission < UserPermissionType.Staff) {
-            throw IllegalArgumentException()
-        }
-
         if (reservation.status != ReservationStatusType.Reserved) {
             throw IllegalArgumentException("Reservation status should be reserved")
         }
@@ -35,11 +30,6 @@ class ReservationAdminController {
     @PostMapping("/admin/reservation/checkOut/{reservation}")
     @Secured
     fun checkOut(@PathVariable reservation: Reservation): Map<String, Boolean> {
-        val user = securityContext.currentUser ?: throw IllegalArgumentException()
-        if (user.permission < UserPermissionType.Staff) {
-            throw IllegalArgumentException()
-        }
-
         if (reservation.status != ReservationStatusType.CheckedIn) {
             throw IllegalArgumentException("Reservation status should be checked in")
         }

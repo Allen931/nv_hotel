@@ -6,7 +6,7 @@ import com.hotel.reservation.entity.Room
 import com.hotel.reservation.entity.User
 import com.hotel.reservation.exception.DuplicateReservationException
 import com.hotel.reservation.exception.NoRoomsAvailableException
-import com.hotel.reservation.exception.ReservationNotExistsException
+import com.hotel.reservation.exception.ReservationAlreadyCancelledException
 import com.hotel.reservation.repository.ReservationRepository
 import com.hotel.reservation.repository.RoomRepository
 import com.hotel.reservation.type.ReservationStatusType
@@ -63,11 +63,10 @@ class RoomService {
     }
 
     fun cancelReservation(reservation: Reservation) {
-        if(reservation.status == ReservationStatusType.Reserved){
+        if (reservation.status != ReservationStatusType.Cancelled) {
             reservation.status = ReservationStatusType.Cancelled
         } else {
-            throw ReservationNotExistsException()
+            throw ReservationAlreadyCancelledException()
         }
-
     }
 }
