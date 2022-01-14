@@ -5,21 +5,21 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "rooms")
-open class Room(
+class Room(
     @Id
     @Column(nullable = false)
-    open var roomNumber: Int,
+    var roomNumber: Int,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    open var type: RoomType,
+    var type: RoomType,
 
     @Column(nullable = false)
-    open var beds: Int,
+    var beds: Int,
 
     @Column(nullable = false)
-    open var costPerNight: Int,
+    var costPerNight: Int,
 
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
-    open val reservations: MutableList<Reservation> = ArrayList(),
+    val reservations: MutableList<Reservation> = ArrayList(),
 ) {}

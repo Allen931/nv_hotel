@@ -6,30 +6,30 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "users")
-open class User(
+class User(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    open val id: Int? = null,
+    val id: Int? = null,
 
     @Column(nullable = false)
-    open var name: String,
+    var name: String,
 
     @Column(nullable = false, unique = true)
-    open var loginName: String,
+    var loginName: String,
 
     @Column(nullable = false)
-    open var passwordHash: String,
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    open var permission: UserPermissionType = UserPermissionType.Customer,
+    var passwordHash: String,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    open var loyalty: UserLoyaltyType = UserLoyaltyType.Ambassador,
+    var permission: UserPermissionType = UserPermissionType.Customer,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var loyalty: UserLoyaltyType = UserLoyaltyType.Ambassador,
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    open val reservations: MutableList<Reservation> = ArrayList(),
+    val reservations: MutableList<Reservation> = ArrayList(),
 ) {
     constructor(name: String, loginName: String, passwordHash: String, permission: UserPermissionType = UserPermissionType.Customer)
             : this(null, name, loginName, passwordHash, permission) {}
