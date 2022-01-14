@@ -5,6 +5,7 @@ import com.hotel.reservation.exception.UserAlreadyExistsException
 import com.hotel.reservation.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.ui.ModelMap
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.ModelAttribute
@@ -15,24 +16,23 @@ import javax.servlet.http.HttpServletRequest
 
 @Controller
 class RegistrationController {
-    @Autowired
-    private lateinit var userService: UserService
+    @Autowired private lateinit var userService: UserService
 
     @RequestMapping("/register")
     fun register(
         @ModelAttribute("user") userDto: UserDto,
-        model: ModelMap,
+        model: Model,
         request: HttpServletRequest
-    ): ModelAndView {
+    ): String {
         if (request.method == "POST") {
             try {
                 val user = userService.register(userDto)
-                return ModelAndView("redirect:/secure", model)
+                return "redirect:/secure"
             } catch (e: UserAlreadyExistsException) {
                 model.addAttribute("error", "User already exists!")
             }
         }
 
-        return ModelAndView("register", model)
+        return "register"
     }
 }

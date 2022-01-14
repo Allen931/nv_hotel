@@ -26,7 +26,7 @@ class User(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var loyalty: UserLoyaltyType = UserLoyaltyType.Ambassador,
+    var loyalty: UserLoyaltyType = UserLoyaltyType.Member,
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     val reservations: MutableList<Reservation> = ArrayList(),

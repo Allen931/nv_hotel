@@ -1,6 +1,7 @@
 package com.hotel.reservation.entity
 
 import com.hotel.reservation.type.RoomType
+import com.hotel.reservation.type.RoomTypePriceMap
 import javax.persistence.*
 
 @Entity
@@ -14,12 +15,8 @@ class Room(
     @Enumerated(EnumType.STRING)
     var type: RoomType,
 
-    @Column(nullable = false)
-    var beds: Int,
-
-    @Column(nullable = false)
-    var costPerNight: Int,
-
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     val reservations: MutableList<Reservation> = ArrayList(),
-) {}
+) {
+    val price: Int get() = RoomTypePriceMap[type]!!
+}
