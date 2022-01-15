@@ -34,7 +34,7 @@ class ReservationService {
 
     @Transactional
     fun reserveRoom(user: User, roomType: RoomType, @Valid reservationDto: ReservationDto) : Reservation {
-        if (reservationDto.room != null && reservationDto.room.type != roomType) {
+        if (reservationDto.room != null && reservationDto.room!!.type != roomType) {
             throw IllegalArgumentException("Room type does not match specified room");
         }
 
@@ -74,7 +74,7 @@ class ReservationService {
             ensureValidCheckInCheckOutTime(reservation.user, reservationDto.checkInTime!!, reservationDto.checkOutTime!!)
         }
 
-        if (!roomService.isRoomAvailable(reservationDto.room, reservationDto.checkInTime!!, reservationDto.checkOutTime!!))
+        if (!roomService.isRoomAvailable(reservationDto.room!!, reservationDto.checkInTime!!, reservationDto.checkOutTime!!))
             throw DuplicateReservationException()
 
         modelMapper.map(reservationDto, reservation)
