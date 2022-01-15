@@ -30,17 +30,18 @@ class PaymentController {
         return ModelAndView("redirect:/payment/pay/{payment}", model)
     }
 
-    @RequestMapping("/payment/pay/{payment}")
-    fun pay(@PathVariable payment: Payment, @RequestParam creditCardNumber: String?, model: Model): String {
+    @RequestMapping("/payment/{payment}/pay")
+    fun pay(@PathVariable payment: Payment, @RequestParam creditCardNumber: String?, model: ModelMap): ModelAndView {
         if (creditCardNumber != null) {
             try {
                 paymentService.processPayment(payment, creditCardNumber)
-                return "redirect:/reservation/show"
+                model.addAttribute(payment.reservation)
+                return ModelAndView("redirect:/reservation/{reservation}", model)
             } catch (e: PaymentFailedException) {
                 model.addAttribute("error", e.message)
             }
         }
 
-        return "pay"
+        return ModelAndView("pay", model)
     }
 }

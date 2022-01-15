@@ -30,7 +30,7 @@ class RoomAdminController {
         return mapOf("success" to true)
     }
 
-    @PostMapping("/admin/room/delete/{roomNumber}")
+    @DeleteMapping("/admin/room/{roomNumber}/delete")
     fun deleteRoom(
         @PathVariable roomNumber: Int,
         request: HttpServletRequest

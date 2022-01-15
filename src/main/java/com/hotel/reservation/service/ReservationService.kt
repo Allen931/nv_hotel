@@ -12,6 +12,7 @@ import com.hotel.reservation.repository.RoomRepository
 import com.hotel.reservation.type.ReservationStatusType
 import com.hotel.reservation.type.RoomType
 import com.hotel.reservation.type.UserLoyaltyType
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -29,6 +30,7 @@ class ReservationService {
     @Autowired private lateinit var reservationRepository: ReservationRepository
     @Autowired private lateinit var roomService: RoomService
     @Autowired private lateinit var paymentService: PaymentService
+    @Autowired private lateinit var modelMapper: ModelMapper
 
     @Transactional
     fun reserveRoom(user: User, roomType: RoomType, @Valid reservationDto: ReservationDto) : Reservation {
@@ -38,6 +40,7 @@ class ReservationService {
 
         val checkInTime = reservationDto.checkInTime ?: throw IllegalArgumentException()
         val checkOutTime = reservationDto.checkOutTime ?: throw IllegalArgumentException()
+        ensureValidCheckInCheckOutTime(user, checkInTime, checkOutTime)
 
         val room = reservationDto.room ?: assignRoom(roomType, checkInTime, checkOutTime) ?: throw NoRoomsAvailableException()
 
@@ -59,16 +62,22 @@ class ReservationService {
     }
 
     @Transactional
-    fun changeRoom(reservation: Reservation, room: Room) {
-        if (room.type != reservation.room.type) {
-            throw IllegalArgumentException("Cannot change room across types")
+    fun changeReservation(reservation: Reservation, @Valid reservationDto: ReservationDto, validateStayTime: Boolean = true) {
+        if (reservationDto.room!!.type != reservation.room.type) throw IllegalArgumentException("Cannot change room across types")
+        if (validateStayTime) {
+            if ((reservationDto.checkInTime!!.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay() !=
+                reservation.checkInTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay()) &&
+                (reservationDto.checkOutTime!!.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay() !=
+                reservation.checkOutTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay())) {
+                throw IllegalArgumentException("Check-in and check-out date must stay the same")
+            }
+            ensureValidCheckInCheckOutTime(reservation.user, reservationDto.checkInTime!!, reservationDto.checkOutTime!!)
         }
 
-        if (!roomService.isRoomAvailable(room, reservation.checkInTime, reservation.checkOutTime)) {
+        if (!roomService.isRoomAvailable(reservationDto.room, reservationDto.checkInTime!!, reservationDto.checkOutTime!!))
             throw DuplicateReservationException()
-        }
 
-        reservation.room = room
+        modelMapper.map(reservationDto, reservation)
         reservationRepository.save(reservation)
     }
 
@@ -82,11 +91,36 @@ class ReservationService {
         reservation.payments.map { paymentService.refundPayment(it) }
     }
 
-    private fun assignRoom(roomType: RoomType, checkInTime: Date, checkOutTime: Date) : Room? {
+    fun assignRoom(roomType: RoomType, checkInTime: Date, checkOutTime: Date) : Room? {
         val rooms = roomRepository.findAvailableRoomsByTypeAndStayTime(roomType, checkInTime, checkOutTime)
         if (rooms.isEmpty()) return null
 
         return rooms[Random.nextInt(rooms.size)]
     }
 
+    private fun ensureValidCheckInCheckOutTime(user: User, checkInTime: Date, checkOutTime: Date) {
+        val currentTime = Date()
+
+        if (checkInTime.before(currentTime) || checkOutTime.before(currentTime))
+            throw IllegalArgumentException("Check in time and check out time must be in the future")
+
+        if (checkOutTime.before(checkInTime))
+            throw IllegalArgumentException("Check out time must be later than check in time")
+
+        val days = Duration.between(
+            checkInTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay(),
+            checkOutTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay()).toDays().toInt()
+
+        if (days <= 0)
+            throw IllegalArgumentException("Stay time must be more than 1 day")
+
+        if (user.loyalty < UserLoyaltyType.Gold) {
+            if (checkInTime.hours < 16) throw IllegalArgumentException("Check in time must be after 4PM")
+            if (checkOutTime.hours >= 12) throw IllegalArgumentException("Check out time must be before 12PM")
+        } else {
+            // Gold and above members can check in early and check out late
+            if (checkInTime.hours < 12) throw IllegalArgumentException("Check in time must be after 12PM")
+            if (checkOutTime.hours >= 16) throw IllegalArgumentException("Check out time must be before 4PM")
+        }
+    }
 }

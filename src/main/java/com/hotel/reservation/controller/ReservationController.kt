@@ -9,12 +9,15 @@ import com.hotel.reservation.repository.RoomRepository
 import com.hotel.reservation.security.SecurityContext
 import com.hotel.reservation.service.ReservationService
 import com.hotel.reservation.type.RoomType
+import com.hotel.reservation.type.UserLoyaltyType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
+import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
 import java.lang.Exception
 import java.util.Date
 import javax.servlet.http.HttpServletRequest
@@ -40,53 +43,78 @@ class ReservationController {
         return "roomAvailability"
     }
 
-    @RequestMapping("/reservation/reserve/{roomType}")
+    @GetMapping("/reservation")
     @Secured
-    fun reserveRoom(
-        @PathVariable roomType: RoomType,
-        @ModelAttribute("reservation") reservationDto: ReservationDto,
-        request: HttpServletRequest
-    ): String {
-        if (request.method == "POST") {
-            try {
-                val reservation = reservationService.reserveRoom(securityContext.currentUser!!, roomType, reservationDto)
-            } catch (e: Exception) {
-                throw e
-            }
-        }
-
-        return "reserveRoom"
-    }
-
-    @GetMapping("/reservation/show")
-    @Secured
-    fun showReservations(model: Model): String {
+    fun listReservations(model: Model): String {
         model.addAttribute("reservations", securityContext.currentUser!!.reservations)
-        return "showReservations"
+        return "listReservations"
     }
 
-    @RequestMapping("/reservation/changeRoom/{reservation}")
+    @GetMapping("/reservation/{reservation}")
+    fun showReservation(
+        @PathVariable @ModelAttribute reservation: Reservation
+    ): String {
+        return "showReservation"
+    }
+
+    @RequestMapping("/reservation/{reservation}/change")
     @Secured
-    fun changeRoom(@PathVariable reservation: Reservation, @RequestParam room: Room?, model: Model): String {
-        if (room != null) {
-            try {
-                reservationService.changeRoom(reservation, room)
-                return "redirect:/reservation/show"
-            } catch (e: DuplicateReservationException) {
-                model.addAttribute("error", "The room was already taken")
+    fun changeReservation(
+        @PathVariable reservation: Reservation,
+        @ModelAttribute reservationDto: ReservationDto,
+        request: HttpServletRequest,
+        model: ModelMap
+    ): ModelAndView {
+        if (request.method == "POST") {
+            if (securityContext.currentUser!!.loyalty < UserLoyaltyType.Platinum &&
+                reservationDto.room?.roomNumber != reservation.room.roomNumber) {
+                model.addAttribute("error", "Only platinum and ambassador users can pick room")
+            } else {
+                try {
+                    reservationService.changeReservation(reservation, reservationDto, true)
+                    model.addAttribute(reservation)
+                    return ModelAndView("redirect:/reservation/{reservation}", model)
+                } catch (e: DuplicateReservationException) {
+                    model.addAttribute("error", "The chosen check-in and check-out time is not available")
+                }
             }
         }
 
         model.addAttribute("rooms", roomRepository.findAvailableRoomsByTypeAndStayTime(
             reservation.room.type, reservation.checkInTime, reservation.checkOutTime))
 
-        return "changeRoom"
+        return ModelAndView("changeReservation", model)
     }
 
-    @GetMapping("/reservation/cancel/{reservation}")
+    @GetMapping("/reservation/{reservation}/cancel")
     @Secured
     fun cancelReservation(@PathVariable reservation: Reservation): String {
         reservationService.cancelReservation(reservation)
-        return "redirect:/reservation/show"
+        return "redirect:/reservation"
+    }
+
+    @RequestMapping("/reservation/reserve/{roomType}")
+    @Secured
+    fun reserveRoom(
+        @PathVariable roomType: RoomType,
+        @ModelAttribute("reservation") reservationDto: ReservationDto,
+        request: HttpServletRequest,
+        model: ModelMap
+    ): ModelAndView {
+        if (request.method == "POST") {
+            try {
+                val reservation = reservationService.reserveRoom(securityContext.currentUser!!, roomType, reservationDto)
+                model.addAttribute(reservation)
+                return ModelAndView("redirect:/reservation/{reservation}", model)
+            } catch (e: Exception) {
+                when (e) {
+                    is IllegalArgumentException -> model.addAttribute("error", e.message)
+                    is DuplicateReservationException -> model.addAttribute("error", "The time you have chosen is no longer available")
+                    else -> throw e
+                }
+            }
+        }
+
+        return ModelAndView("reserveRoom", model)
     }
 }

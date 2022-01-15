@@ -13,13 +13,13 @@ class PaymentAdminController {
     @Autowired private lateinit var paymentRepository: PaymentRepository
     @Autowired private lateinit var paymentService: PaymentService
 
-    @PostMapping("/admin/payment/setPaid/{payment}")
+    @PostMapping("/admin/payment/{payment}/setPaid")
     fun setPaid(@PathVariable payment: Payment): Map<String, Boolean> {
         paymentService.processPayment(payment, null)
         return mapOf("success" to true)
     }
 
-    @PostMapping("/admin/payment/refund/{payment}")
+    @PostMapping("/admin/payment/{payment}/refund")
     fun refund(@PathVariable payment: Payment): Map<String, Boolean> {
         paymentService.refundPayment(payment)
         return mapOf("success" to true)

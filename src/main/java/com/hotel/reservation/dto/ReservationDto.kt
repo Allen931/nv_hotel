@@ -1,11 +1,12 @@
 package com.hotel.reservation.dto
 
 import com.hotel.reservation.entity.Room
-import com.sun.istack.NotNull
+import com.hotel.reservation.type.ReservationStatusType
+import javax.validation.constraints.NotNull
 import org.springframework.format.annotation.DateTimeFormat
 import java.util.Date
 
-data class ReservationDto(
+open class ReservationDto(
     val room: Room?,
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")

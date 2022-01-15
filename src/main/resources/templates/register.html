@@ -1,15 +1,49 @@
-<html>
-<body>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
 
-<div th:if="${error}">
-    Invalid username and password.
+<div layout:fragment="content">
+
+    <section class="banner_area">
+        <div class="booking_table d_flex align-items-center">
+
+            <div class="overlay bg-parallax" data-stellar-ratio="0.9" data-stellar-vertical-offset="0"
+                 data-background=""></div>
+            <div class="container">
+                <div class="banner_content text-center">
+                    <div class="d-flex justify-content-center">
+                        <form th:object="${user}" method="POST">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" name="name" class="form-control" id="name" th:field="*{name}"
+                                       aria-describedby="emailHelp"
+                                       placeholder="name">
+                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with
+                                    anyone
+                                    else.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="loginName">Login name</label>
+                                <input type="text" name="loginName" class="form-control" id="loginName" th:field="*{loginName}"
+                                       aria-describedby="emailHelp"
+                                       placeholder="login name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="text" name="password" class="form-control" id="password" th:field="*{password}"
+                                       placeholder="Password">
+                            </div>
+                            <button type="submit" value="Register" class="btn btn-primary">Submt</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </div>
-
-<form th:object="${user}" method="POST">
-    <div><label> Name : <input type="text" name="name" th:field="*{name}"/> </label></div>
-    <div><label> Login Name : <input type="text" name="loginName" th:field="*{loginName}"/> </label></div>
-    <div><label> Password: <input type="password" name="password" th:field="*{password}"/> </label></div>
-    <div><input type="submit" value="Register"/></div>
-</form>
-</body>
 </html>

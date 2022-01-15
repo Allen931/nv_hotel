@@ -25,7 +25,7 @@ class IndexController {
     @GetMapping("/login")
     fun login(): String {
         if (securityContext.currentUser != null)
-            return "redirect:/reservation/show"
+            return "redirect:/reservation"
 
         return "login"
     }

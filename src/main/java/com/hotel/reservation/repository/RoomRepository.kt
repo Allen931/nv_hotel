@@ -10,7 +10,15 @@ import java.util.Date
 
 @Repository
 interface RoomRepository : CrudRepository<Room, Int> {
-    @Query("SELECT r2 FROM Room r2 WHERE (:type is null or r2.type = :type) AND NOT EXISTS (SELECT r FROM Reservation r WHERE r.room = r2 AND r.checkOutTime > :checkInTime AND r.checkInTime < :checkOutTime AND r.status <> com.hotel.reservation.type.ReservationStatusType.Cancelled)")
+    @Query("""SELECT r2 FROM Room r2 
+                WHERE (:type is null OR r2.type = :type) 
+                AND NOT EXISTS 
+                    (SELECT r FROM Reservation r 
+                        WHERE r.room = r2 
+                        AND r.checkOutTime > :checkInTime 
+                        AND r.checkInTime < :checkOutTime
+                        AND r.status <> com.hotel.reservation.type.ReservationStatusType.Cancelled
+                    )""")
     fun findAvailableRoomsByTypeAndStayTime(
         @Param("type") type: RoomType?,
         @Param("checkInTime") checkInTime: Date,
