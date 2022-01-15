@@ -8,11 +8,11 @@ import com.hotel.reservation.type.RoomType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.security.access.annotation.Secured
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.persistence.EntityManager
 import javax.persistence.criteria.Predicate
-import kotlin.collections.ArrayList
 
 @RestController
 @Secured
@@ -48,33 +48,65 @@ class ReservationAdminController {
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") checkInTime: Date?,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") checkOutTime: Date?,
         @RequestParam type: RoomType? = null,
-        @RequestParam status: ReservationStatusType? = null
-    ) {
+        @RequestParam status: ReservationStatusType? = null,
+        model: Model
+    ): String {
         val criteriaBuilder = entityManager.criteriaBuilder
-        val query = criteriaBuilder.createQuery(Reservation::class.java)
-
-        val reservations = query.from(Reservation::class.java)
-        query.select(reservations)
-
-        val predicates = mutableListOf<Predicate>()
 
         val userQuery = criteriaBuilder.createQuery(User::class.java)
-        val users = userQuery.from(User::class.java)
-        userQuery.select(users)
+        val userRoot = userQuery.from(User::class.java)
+        userQuery.select(userRoot)
 
-        val userPredicates = ArrayList<Predicate>()
+        val userPredicates = mutableListOf<Predicate>()
         if (uid != null) {
-            userPredicates.add(criteriaBuilder.equal(users.get<Int>("id"), uid))
+            userPredicates.add(criteriaBuilder.equal(userRoot.get<Int>("id"), uid))
         }
 
         if (name != null) {
-            userPredicates.add(criteriaBuilder.like(users.get("name"), name))
+            userPredicates.add(criteriaBuilder.like(userRoot.get("name"), name))
         }
 
-        userQuery.where()
+        if (type != null ) {
+            userPredicates.add(criteriaBuilder.equal(userRoot.get<String>("roomType"), type.name))
+        }
+
+        userQuery.where(criteriaBuilder.and(*userPredicates.toTypedArray()))
+
+        val users = entityManager.createQuery(userQuery).resultList
+
+        val query = criteriaBuilder.createQuery(Reservation::class.java)
+
+        val reservationRoot = query.from(Reservation::class.java)
+        query.select(reservationRoot)
+
+        val predicates = mutableListOf<Predicate>()
 
         if (id != null) {
-            predicates.add(criteriaBuilder.equal(reservations.get<Int>("id"), id))
+            predicates.add(criteriaBuilder.equal(reservationRoot.get<Int>("id"), id))
         }
+
+        if (checkInTime != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(reservationRoot.get<Date>("checkInTime"), checkInTime))
+        }
+
+        if (checkOutTime != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(reservationRoot.get<Date>("checkOutTime"), checkOutTime))
+        }
+
+        if (status != null) {
+            predicates.add(criteriaBuilder.equal(reservationRoot.get<String>("status"), status.name))
+        }
+
+        if (users.isNotEmpty()) {
+            predicates.add(reservationRoot.get<Int>("user").`in`(users))
+        }
+
+        query.where(criteriaBuilder.and(*predicates.toTypedArray()))
+
+        val reservations = entityManager.createQuery(query).resultList
+
+        model.addAttribute("reservations", reservations)
+
+        return "reservationList"
     }
 }
