@@ -1,14 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>reservations</title>
-</head>
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
 
-{% for reservation in reservations %}
-    <p>{{reservation.id}}</p>
-{% endfor %}
+<div layout:fragment="content">
 
-</body>
+    <section class="banner_area">
+        <div class="booking_table d_flex align-items-center">
+
+            <div class="overlay bg-parallax" data-stellar-ratio="0.9" data-stellar-vertical-offset="0"
+                 data-background=""></div>
+            <div class="container">
+                <p th:text="${reservation.id}"></p>
+                <p th:text="${reservation.room.roomNumber}"></p>
+                <p th:text="${reservation.checkInTime}"></p>
+                <p th:text="${reservation.checkOutTime}"></p>
+                <p th:text="${reservation.status}"></p>
+                <!---
+                <th:block th:if="${reservation.status != reservationStatusType.Cancelled}"
+                --->
+                    <a th:href="@{/reservation/}+${reservation.id}+@{/cancel}" class="btn btn-danger">Cancel Reservation</a>
+
+            </div>
+        </div>
+    </section>
+
+</div>
 </html>

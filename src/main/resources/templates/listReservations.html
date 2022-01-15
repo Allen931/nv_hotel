@@ -1,10 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
 
-</body>
+<div layout:fragment="content">
+
+    <section class="banner_area">
+        <div class="booking_table d_flex align-items-center">
+
+            <div class="overlay bg-parallax" data-stellar-ratio="0.9" data-stellar-vertical-offset="0"
+                 data-background=""></div>
+            <div class="container">
+                <div class="banner_content text-center">
+                    <table>
+                        <th:block th:each="reservation : ${reservations}">
+
+                            <li><a th:href="@{/reservation/} + ${reservation.id}" th:text="${reservation.id}"></a></li>
+
+                        </th:block>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
 </html>
