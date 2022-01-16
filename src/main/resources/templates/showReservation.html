@@ -20,7 +20,7 @@
                     <p th:text="'Reservation status: '+${reservation.status}"></p>
 
                     <p class="lead" th:if="${reservation.status != T(com.hotel.reservation.type.ReservationStatusType).Cancelled}">
-                        <a th:href="@{/reservation/{id}/cancel(id = reservation.id)}" class="btn btn-danger">Cancel Reservation</a>
+                        <a th:href="@{/reservation/{id}/cancel(id = ${reservation.id})}" class="btn btn-danger">Cancel Reservation</a>
                     </p>
                 </div>
             </div>
