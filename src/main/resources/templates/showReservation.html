@@ -15,12 +15,12 @@
                     <p class="lead" th:text="'Reservation id: '+${reservation.id}"></p>
                     <hr class="my-4">
                     <p class="lead" th:text="'Room number: '+${reservation.room.roomNumber}"></p>
-                    <p class="lead" th:text="'Check in time: '+${reservation.checkOutTime}"></p>
+                    <p class="lead" th:text="'Check in time: '+${reservation.checkInTime}"></p>
                     <p class="lead" th:text="'Check out time: '+${reservation.checkOutTime}"></p>
                     <p th:text="'Reservation status: '+${reservation.status}"></p>
 
-                    <p class="lead">
-                        <a th:href="@{/reservation/}+${reservation.id}+@{/cancel}" class="btn btn-danger">Cancel Reservation</a>
+                    <p class="lead" th:if="${reservation.status != T(com.hotel.reservation.type.ReservationStatusType).Cancelled}">
+                        <a th:href="@{/reservation/{id}/cancel(id = reservation.id)}" class="btn btn-danger">Cancel Reservation</a>
                     </p>
                 </div>
             </div>

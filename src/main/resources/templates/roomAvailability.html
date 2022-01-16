@@ -1,20 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Room Availability</title>
-</head>
-<body>
-<form method="GET">
-    <div><label> Check In : <input type="datetime-local" name="checkInTime" th:value="${#request.getParameter('checkInTime')}"/> </label></div>
-    <div><label> Check Out: <input type="datetime-local" name="checkOutTime" th:value="${#request.getParameter('checkOutTime')}"/> </label></div>
-    <div><input type="submit" value="Search"/></div>
-</form>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
 
-<table>
-    <th:block th:each="room : ${rooms}">
-        <td th:text="${room.roomNumber}"></td>
-    </th:block>
-</table>
-</body>
+<div layout:fragment="content">
+    <section class="banner_area">
+        <div class="booking_table d_flex align-items-center" style="min-height: 700px">
+            <div class="overlay bg-parallax" data-stellar-ratio="0.9" data-stellar-vertical-offset="0" data-background="" style="transform: translateY(0px);"></div>
+            <div class="container">
+                <div class="banner_content text-center">
+                    <h2>Book Your Stay</h2>
+                </div>
+            </div>
+        </div>
+        <div class="hotel_booking_area position" id="book-section">
+            <div class="container">
+                <div class="hotel_booking_table">
+                    <div class="col-md-3">
+                        <h2>Book Now</h2>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="boking_table">
+                            <form method="GET" autocomplete="off">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="book_tabel_item">
+                                            <div class="form-group">
+                                                <div class="input-group date" id="datetimepicker11">
+                                                    <input type="text" name="checkInTime" class="form-control" placeholder="Arrival Date" th:value="${#request.getParameter('checkInTime')}">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="book_tabel_item">
+                                            <div class="form-group">
+                                                <div class="input-group date" id="datetimepicker1">
+                                                    <input type="text" name="checkOutTime" class="form-control" placeholder="Departure Date" th:value="${#request.getParameter('checkOutTime')}">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="book_tabel_item">
+                                            <button type="submit" class="book_now_btn button_hover">Search</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="sample-text-area" style="padding-top: 0" th:if="${roomAvailability}">
+        <div class="container">
+            <div class="section-top-border">
+                <h3 class="mb-30 title_color">Availability</h3>
+                <div class="progress-table-wrap">
+                    <div class="progress-table">
+                        <div class="table-head">
+                            <div class="room-type">Room Type</div>
+                            <div class="room-avail">Availability</div>
+                            <div class="room-option">Option</div>
+                        </div>
+                        <div class="table-row" th:each="roomType : ${T(com.hotel.reservation.type.RoomType).values()}">
+                            <div class="room-type" th:text="${roomType}"></div>
+                            <div class="room-avail">
+                                <span th:text="${roomAvailability[roomType.toString()] ?: 0}"></span>&nbsp;Rooms Remaining
+                            </div>
+                            <div class="room-option">
+                                <a th:href="@{/reservation/reserve/} + ${roomType.toString()} + '?checkInTime=' + ${#dates.format(checkInTime, 'yyyy-MM-dd HH:mm')} + '&checkOutTime=' + ${#dates.format(checkOutTime, 'yyyy-MM-dd HH:mm')}"
+                                   class="genric-btn primary-border"
+                                   th:if="${roomAvailability[roomType.toString()]}">
+                                    Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        .table-head {
+                            color: #222222;
+                            line-height: 40px;
+                            text-transform: uppercase;
+                            font-weight: 500;
+                        }
+                        .room-type { width: 30%; padding-left: 50px; }
+                        .room-avail { width: 50%; }
+                        .room-option { width: 20%; }
+                    </style>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="accomodation_area section_gap">
+        <div class="container">
+            <div class="section_title text-center">
+                <h2 class="title_color">Hotel Accomodation</h2>
+                <p>We all live in an age that belongs to the young at heart. Life that is becoming extremely fast, </p>
+            </div>
+            <div class="row mb_30">
+                <div class="col-lg-3 col-sm-6">
+                    <div class="accomodation_item text-center">
+                        <div class="hotel_img">
+                            <img src="/image/room_Economy.jpg" alt="">
+                        </div>
+                        <a href="#"><h4 class="sec_h4">Economy RTX3070 Room</h4></a>
+                        <h5>$100<small>/night</small></h5>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="accomodation_item text-center">
+                        <div class="hotel_img">
+                            <img src="/image/room_Business.jpg" alt="">
+                        </div>
+                        <a href="#"><h4 class="sec_h4">Business RTX3080 Room</h4></a>
+                        <h5>$150<small>/night</small></h5>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="accomodation_item text-center">
+                        <div class="hotel_img">
+                            <img src="/image/room_Luxury.jpg" alt="">
+                        </div>
+                        <a href="#"><h4 class="sec_h4">Luxury RTX3090 Room</h4></a>
+                        <h5>$200<small>/night</small></h5>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="accomodation_item text-center">
+                        <div class="hotel_img">
+                            <img src="/image/room_Suite.jpg" alt="">
+                        </div>
+                        <a href="#"><h4 class="sec_h4">Executive A100 Suite</h4></a>
+                        <h5>$500<small>/night</small></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+</div>
 </html>

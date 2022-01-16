@@ -1,18 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Reserve Room</title>
-</head>
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
 
-<div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+<div layout:fragment="content">
 
-<form th:object="${reservation}" method="POST">
-    <div><label> Check In : <input type="datetime-local" th:field="*{checkInTime}"/> </label></div>
-    <div><label> Check Out: <input type="datetime-local" th:field="*{checkOutTime}"/> </label></div>
-    <div><input type="submit" value="Register"/></div>
-</form>
+    <section class="breadcrumb_area blog_banner_two">
+        <div class="overlay bg-parallax" data-stellar-ratio="0.8" data-stellar-vertical-offset="0" data-background=""></div>
+        <div class="container">
+            <div class="page-cover text-center">
+                <h2 class="page-cover-tittle f_48">Confirm Your Reservation</h2>
+            </div>
+        </div>
+    </section>
 
-</body>
+    <section class="sample-text-area">
+        <div class="container">
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+            <div class="d-flex justify-content-center">
+                <form th:action="@{/reservation/reserve/} + ${roomType.toString()}" method="post" autocomplete="off">
+                    <div class="form-group row mt-10">
+                        <label for="roomType">Room Type</label>
+                        <input type="text" name="roomType" class="single-input" id="roomType" disabled th:value="${roomType.toString()}">
+                    </div>
+                    <div class="form-group row mt-10">
+                        <label for="checkInTime">Check In Time</label>
+                        <input type="text" name="checkInTime" class="single-input" id="checkInTime" th:value="${#dates.format(reservation.checkInTime, 'yyyy-MM-dd HH:mm')}">
+                    </div>
+                    <div class="form-group row mt-10">
+                        <label for="checkOutTime">Check Out Time</label>
+                        <input type="text" name="checkOutTime" class="single-input" id="checkOutTime" th:value="${#dates.format(reservation.checkOutTime, 'yyyy-MM-dd HH:mm')}">
+                    </div>
+                    <div class="form-group row mt-10">
+                        <button type="submit" class="genric-btn info">Make Reservation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
 </html>

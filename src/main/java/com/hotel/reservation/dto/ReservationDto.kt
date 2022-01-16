@@ -8,11 +8,11 @@ import java.util.Date
 open class ReservationDto(
     open val room: Room?,
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @field:NotNull
     open val checkInTime: Date?,
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @field:NotNull
     open val checkOutTime: Date?
 ) {}

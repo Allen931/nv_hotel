@@ -6,44 +6,44 @@
 
 <div layout:fragment="content">
 
-    <section class="banner_area">
-        <div class="booking_table d_flex align-items-center">
-
-            <div class="overlay bg-parallax" data-stellar-ratio="0.9" data-stellar-vertical-offset="0"
-                 data-background=""></div>
-            <div class="container">
-                <div class="banner_content text-center">
-                    <div class="d-flex justify-content-center">
-                        <form th:object="${user}" method="POST">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" name="name" class="form-control" id="name" th:field="*{name}"
-                                       aria-describedby="emailHelp"
-                                       placeholder="name">
-                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with
-                                    anyone
-                                    else.</small>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="loginName">Login name</label>
-                                <input type="text" name="loginName" class="form-control" id="loginName" th:field="*{loginName}"
-                                       aria-describedby="emailHelp"
-                                       placeholder="login name">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="text" name="password" class="form-control" id="password" th:field="*{password}"
-                                       placeholder="Password">
-                            </div>
-                            <button type="submit" value="Register" class="btn btn-primary">Submit</button>
-                        </form>
-                    </div>
-                </div>
+    <section class="breadcrumb_area blog_banner_two">
+        <div class="overlay bg-parallax" data-stellar-ratio="0.8" data-stellar-vertical-offset="0" data-background=""></div>
+        <div class="container">
+            <div class="page-cover text-center">
+                <h2 class="page-cover-tittle f_48">Register</h2>
             </div>
         </div>
     </section>
+
+    <section class="sample-text-area">
+        <div class="container">
+            <div class="d-flex justify-content-center">
+                <form th:object="${user}" method="POST">
+                    <div class="form-group row mt-10">
+                        <label for="name">Full Name</label>
+                        <input type="text" name="name" class="single-input" id="name" th:field="*{name}" placeholder="John Smith">
+                        <small class="form-text text-muted">We'll never share your information with anyone else.</small>
+                    </div>
+
+                    <div class="form-group row mt-10">
+                        <label for="loginName">Login Name</label>
+                        <input type="text" name="loginName" class="single-input" id="loginName" th:field="*{loginName}" placeholder="Login Name">
+                    </div>
+
+                    <div class="form-group row mt-10">
+                        <label for="password">Password</label>
+                        <input type="text" name="password" class="single-input" id="password" th:field="*{password}" placeholder="Password">
+                    </div>
+                    <div class="form-group row mt-10">
+                        <button type="submit" value="Register" class="genric-btn info">Register</button>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </section>
+
 
 </div>
 </html>

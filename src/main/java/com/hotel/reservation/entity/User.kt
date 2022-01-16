@@ -30,6 +30,7 @@ class User(
     var loyalty: UserLoyaltyType = UserLoyaltyType.Member,
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OrderBy("checkInTime")
     val reservations: MutableList<Reservation> = ArrayList(),
 ) : Serializable {
     constructor(name: String, loginName: String, passwordHash: String, permission: UserPermissionType = UserPermissionType.Customer)

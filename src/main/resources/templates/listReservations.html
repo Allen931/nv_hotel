@@ -6,40 +6,47 @@
 
 <div layout:fragment="content">
 
-    <section class="banner_area">
-        <div class="booking_table d_flex align-items-center">
-            <div class="overlay bg-parallax" data-stellar-ratio="0.9" data-stellar-vertical-offset="0" data-background="" style="transform: translateY(0px);"></div>
-            <div class="container">
-                <div class="banner_content text-center">
-                    <tr th:each="reservation : ${reservations}">
-                        <td th:text="${reservation.id}" />
-                        <li><a th:href="@{/reservation/} + ${reservation.id}" th:text="${reservation.id}"></a></li>
+    <section class="breadcrumb_area">
+        <div class="overlay bg-parallax" data-stellar-ratio="0.8" data-stellar-vertical-offset="0" data-background="" style="transform: translateY(0px);"></div>
+        <div class="container">
+            <div class="page-cover text-center">
+                <h2 class="page-cover-tittle">Reservations</h2>
+            </div>
+        </div>
+    </section>
 
-                        <div class="section-top-border">
-                            <h3 class="mb-30 title_color">Left Aligned</h3>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <img src="image/elements/d.jpg" alt="" class="img-fluid">
-                                </div>
-                                <div class="col-md-9 mt-sm-20 left-align-p">
-                                    <p th:text="${reservation.id} + ${reservation.status}"></p>
-                                    <a th:href="@{/reservation/} + ${reservation.id}" class="genric-btn success-border">Detail</a>
-                                </div>
+    <section class="accomodation_area section_gap">
+        <div class="container">
+            <div class="row mb_30">
+                <tr th:each="reservation : ${reservations}">
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="accomodation_item text-center">
+
+                            <div class="hotel_img">
+                                <img th:if="${reservation.room.type.toString() == 'Economy'}" src="/image/room_Economy.jpg" alt="">
+                                <img th:if="${reservation.room.type.toString() == 'Business'}" src="/image/room_Business.jpg" alt="">
+                                <img th:if="${reservation.room.type.toString() == 'Luxury'}" src="/image/room_Luxury.jpg" alt="">
+                                <img th:if="${reservation.room.type.toString() == 'Suite'}" src="/image/room_Suite.jpg" alt="">
+                                <a th:href="@{/reservation/} + ${reservation.id}" class="btn theme_btn button_hover">Show more</a>
                             </div>
+                            <a href="#">
+                                <h4 class="sec_h4" th:if="${reservation.room.type.toString() == 'Economy'}">Economy RTX3070 Room</h4>
+                                <h4 class="sec_h4" th:if="${reservation.room.type.toString() == 'Business'}">Business RTX3080 Room</h4>
+                                <h4 class="sec_h4" th:if="${reservation.room.type.toString() == 'Luxury'}">Luxury RTX3090 Room</h4>
+                                <h4 class="sec_h4" th:if="${reservation.room.type.toString() == 'Suite'}">Suite A100 Room</h4>
+                            </a>
+
+                            <p th:text="${reservation.status}"></p>
+                            <p>
+                                <span th:text="${#dates.format(reservation.checkInTime, 'MM/dd')}"></span>
+                                &nbsp;to&nbsp;
+                                <span th:text="${#dates.format(reservation.checkOutTime, 'MM/dd')}"></span>
+                            </p>
                         </div>
+                    </div>
+                </tr>
 
 
-                        <div class="card" style="width: 18rem;">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                <a href="#" class="card-link">Card link</a>
-                                <a href="#" class="card-link">Another link</a>
-                            </div>
-                        </div>
-                    </tr>
-                </div>
             </div>
         </div>
     </section>

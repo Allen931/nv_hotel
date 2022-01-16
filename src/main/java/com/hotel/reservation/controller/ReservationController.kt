@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.lang.Exception
+import java.text.SimpleDateFormat
 import java.util.Date
 import javax.servlet.http.HttpServletRequest
 
@@ -32,16 +33,55 @@ class ReservationController {
 
     @GetMapping("/reservation/roomAvailability")
     fun roomAvailability(
-        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") checkInTime: Date?,
-        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") checkOutTime: Date?,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") checkInTime: Date?,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") checkOutTime: Date?,
         @RequestParam type: RoomType?,
         model: Model
     ): String {
-        if (checkInTime != null && checkOutTime != null)
-            model.addAttribute("rooms", roomRepository.findAvailableRoomsByTypeAndStayTime(
-                type, checkInTime, checkOutTime))
+        if (checkInTime != null && checkOutTime != null) {
+            // Set check-in and check-out time to default options
+            checkInTime.hours = 16
+            checkInTime.minutes = 0
+            checkOutTime.hours = 11
+            checkOutTime.minutes = 59
+
+            val roomAvailability = roomRepository.findAvailableRoomsByTypeAndStayTime(type, checkInTime, checkOutTime)
+                .groupBy { it.type }.mapValues { it.value.size }.mapKeys { it.key.toString() }
+
+            model.addAttribute("roomAvailability", roomAvailability)
+
+            model.addAttribute("checkInTime", checkInTime)
+            model.addAttribute("checkOutTime", checkOutTime)
+        }
 
         return "roomAvailability"
+    }
+
+    @RequestMapping("/reservation/reserve/{roomType}")
+    @Secured
+    fun reserveRoom(
+        @ModelAttribute @PathVariable roomType: RoomType,
+        @ModelAttribute("reservation") reservationDto: ReservationDto,
+        request: HttpServletRequest,
+        model: Model,
+        redirectAttributes: RedirectAttributes
+    ): String {
+        if (request.method == "POST") {
+            try {
+                val reservation = reservationService.reserveRoom(securityContext.currentUser!!, roomType, reservationDto)
+
+                redirectAttributes.addAttribute("id", reservation.id)
+                return "redirect:/reservation/{id}"
+            } catch (e: Exception) {
+                when (e) {
+                    is IllegalArgumentException -> model.addAttribute("error", e.message)
+                    is DuplicateReservationException -> model.addAttribute("error", "The time you have chosen is no longer available")
+                    else -> throw e
+                }
+            }
+        }
+
+        return "reserveRoom"
     }
 
     @GetMapping("/reservation")
@@ -94,32 +134,5 @@ class ReservationController {
     fun cancelReservation(@PathVariable reservation: Reservation): String {
         reservationService.cancelReservation(reservation)
         return "redirect:/reservation"
-    }
-
-    @RequestMapping("/reservation/reserve/{roomType}")
-    @Secured
-    fun reserveRoom(
-        @PathVariable roomType: RoomType,
-        @ModelAttribute("reservation") reservationDto: ReservationDto,
-        request: HttpServletRequest,
-        model: Model,
-        redirectAttributes: RedirectAttributes
-    ): String {
-        if (request.method == "POST") {
-            try {
-                val reservation = reservationService.reserveRoom(securityContext.currentUser!!, roomType, reservationDto)
-
-                redirectAttributes.addAttribute("id", reservation.id)
-                return "redirect:/reservation/{id}"
-            } catch (e: Exception) {
-                when (e) {
-                    is IllegalArgumentException -> model.addAttribute("error", e.message)
-                    is DuplicateReservationException -> model.addAttribute("error", "The time you have chosen is no longer available")
-                    else -> throw e
-                }
-            }
-        }
-
-        return "reserveRoom"
     }
 }

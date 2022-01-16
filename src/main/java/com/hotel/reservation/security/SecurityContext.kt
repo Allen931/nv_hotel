@@ -11,14 +11,10 @@ import org.springframework.stereotype.Component
 class SecurityContext {
     @Autowired private lateinit var userRepository: UserRepository
 
-    private var _currentUser: User? = null
     val currentUser: User? get() {
-        if (_currentUser !== null) return _currentUser
-
         val auth = SecurityContextHolder.getContext().authentication
         if (auth is AnonymousAuthenticationToken) return null
 
-        _currentUser = userRepository.findByLoginName(auth.name)
-        return _currentUser
+        return userRepository.findByLoginName(auth.name)
     }
 }

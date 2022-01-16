@@ -60,8 +60,17 @@
     
     
     $('select').niceSelect();
-    $('#datetimepicker11,#datetimepicker1').datetimepicker({
-        daysOfWeekDisabled: [0, 6]
+    $('.date').datetimepicker({
+        daysOfWeekDisabled: [0, 6],
+        format: 'yyyy-mm-dd',
+        startView: 'month',
+        minView: 'month',
+        autoclose: true
+    });
+
+    $('.date-time').datetimepicker({
+        daysOfWeekDisabled: [0, 6],
+        format: 'yyyy-mm-dd hh:mm'
     });
     
      /*---------gallery isotope js-----------*/
