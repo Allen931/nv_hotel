@@ -1,6 +1,7 @@
 package com.hotel.reservation.service
 
 import com.hotel.reservation.dto.ReservationDto
+import com.hotel.reservation.dto.admin.ReservationAdminDto
 import com.hotel.reservation.entity.Reservation
 import com.hotel.reservation.entity.Room
 import com.hotel.reservation.entity.User
@@ -26,14 +27,19 @@ import kotlin.random.Random
 @Service
 @Validated
 class ReservationService {
-    @Autowired private lateinit var roomRepository: RoomRepository
-    @Autowired private lateinit var reservationRepository: ReservationRepository
-    @Autowired private lateinit var roomService: RoomService
-    @Autowired private lateinit var paymentService: PaymentService
-    @Autowired private lateinit var modelMapper: ModelMapper
+    @Autowired
+    private lateinit var roomRepository: RoomRepository
+    @Autowired
+    private lateinit var reservationRepository: ReservationRepository
+    @Autowired
+    private lateinit var roomService: RoomService
+    @Autowired
+    private lateinit var paymentService: PaymentService
+    @Autowired
+    private lateinit var modelMapper: ModelMapper
 
     @Transactional
-    fun reserveRoom(user: User, roomType: RoomType, @Valid reservationDto: ReservationDto) : Reservation {
+    fun reserveRoom(user: User, roomType: RoomType, @Valid reservationDto: ReservationDto): Reservation {
         if (reservationDto.room != null && reservationDto.room!!.type != roomType) {
             throw IllegalArgumentException("Room type does not match specified room");
         }
@@ -42,7 +48,8 @@ class ReservationService {
         val checkOutTime = reservationDto.checkOutTime ?: throw IllegalArgumentException()
         ensureValidCheckInCheckOutTime(user, checkInTime, checkOutTime)
 
-        val room = reservationDto.room ?: assignRoom(roomType, checkInTime, checkOutTime) ?: throw NoRoomsAvailableException()
+        val room =
+            reservationDto.room ?: assignRoom(roomType, checkInTime, checkOutTime) ?: throw NoRoomsAvailableException()
 
         if (!roomService.isRoomAvailable(room, checkInTime, checkOutTime)) {
             throw DuplicateReservationException()
@@ -50,31 +57,67 @@ class ReservationService {
 
         val days = Duration.between(
             checkInTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay(),
-            checkOutTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay()).toDays().toInt()
+            checkOutTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay()
+        ).toDays().toInt()
 
         val cost = days * room.price
 
-        val reservation = Reservation(user, room, cost, checkInTime, checkOutTime,
-            if (user.loyalty >= UserLoyaltyType.Silver) ReservationStatusType.Reserved else ReservationStatusType.Pending)
+        val reservation = Reservation(
+            user, room, cost, checkInTime, checkOutTime,
+            if (user.loyalty >= UserLoyaltyType.Silver) ReservationStatusType.Reserved else ReservationStatusType.Pending
+        )
         reservationRepository.save(reservation)
 
         return reservation
     }
 
     @Transactional
-    fun changeReservation(reservation: Reservation, @Valid reservationDto: ReservationDto, validateStayTime: Boolean = true) {
-        if (reservationDto.room!!.type != reservation.room.type) throw IllegalArgumentException("Cannot change room across types")
-        if (validateStayTime) {
-            if ((reservationDto.checkInTime!!.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay() !=
-                reservation.checkInTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay()) &&
-                (reservationDto.checkOutTime!!.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay() !=
-                reservation.checkOutTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay())) {
-                throw IllegalArgumentException("Check-in and check-out date must stay the same")
+    fun changeReservation(
+        reservation: Reservation,
+        @Valid reservationDto: ReservationDto,
+        validateStayTime: Boolean = true,
+        validateRoomType: Boolean = true
+    ) {
+        if (reservationDto is ReservationAdminDto) {
+            if (reservationDto.type != reservation.room.type) {
+                if (reservationDto.room.type != reservationDto.type) {
+                    val temp = assignRoom(
+                        reservationDto.type,
+                        reservationDto.checkInTime,
+                        reservationDto.checkOutTime
+                    ) ?: throw IllegalArgumentException("No available rooms")
+                    reservationDto.room = temp
+                }
             }
-            ensureValidCheckInCheckOutTime(reservation.user, reservationDto.checkInTime!!, reservationDto.checkOutTime!!)
         }
 
-        if (!roomService.isRoomAvailable(reservationDto.room!!, reservationDto.checkInTime!!, reservationDto.checkOutTime!!))
+        if (validateRoomType)
+                if (reservationDto.room!!.type != reservation.room.type)
+                    throw IllegalArgumentException("Cannot change room across types")
+        if (validateStayTime) {
+            if ((reservationDto.checkInTime!!.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay() !=
+                        reservation.checkInTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                            .atStartOfDay()) &&
+                (reservationDto.checkOutTime!!.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                    .atStartOfDay() !=
+                        reservation.checkOutTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                            .atStartOfDay())
+            ) {
+                throw IllegalArgumentException("Check-in and check-out date must stay the same")
+            }
+            ensureValidCheckInCheckOutTime(
+                reservation.user,
+                reservationDto.checkInTime!!,
+                reservationDto.checkOutTime!!
+            )
+        }
+
+        if (!roomService.isRoomAvailable(
+                reservationDto.room!!,
+                reservationDto.checkInTime!!,
+                reservationDto.checkOutTime!!
+            )
+        )
             throw DuplicateReservationException()
 
         modelMapper.map(reservationDto, reservation)
@@ -91,7 +134,7 @@ class ReservationService {
         reservation.payments.map { paymentService.refundPayment(it) }
     }
 
-    fun assignRoom(roomType: RoomType, checkInTime: Date, checkOutTime: Date) : Room? {
+    fun assignRoom(roomType: RoomType, checkInTime: Date, checkOutTime: Date): Room? {
         val rooms = roomRepository.findAvailableRoomsByTypeAndStayTime(roomType, checkInTime, checkOutTime)
         if (rooms.isEmpty()) return null
 
@@ -109,7 +152,8 @@ class ReservationService {
 
         val days = Duration.between(
             checkInTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay(),
-            checkOutTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay()).toDays().toInt()
+            checkOutTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay()
+        ).toDays().toInt()
 
         if (days <= 0)
             throw IllegalArgumentException("Stay time must be more than 1 day")

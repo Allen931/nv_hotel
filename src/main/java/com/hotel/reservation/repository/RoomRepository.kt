@@ -24,4 +24,7 @@ interface RoomRepository : CrudRepository<Room, Int> {
         @Param("checkInTime") checkInTime: Date,
         @Param("checkOutTime") checkOutTime: Date
     ): List<Room>
+
+    fun findByRoomNumber(roomNumber: Int): Room?
+    fun findByType(roomType: RoomType): List<Room>
 }

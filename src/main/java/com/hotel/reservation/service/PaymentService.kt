@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
 import java.util.*
-import javax.validation.Valid
 import javax.validation.constraints.Min
 
 @Service
@@ -19,7 +18,7 @@ class PaymentService {
     @Autowired private lateinit var paymentRepository: PaymentRepository
 
     fun createPayment(reservation: Reservation, @Min(value = 1) amount: Int) : Payment {
-        if (reservation.status == ReservationStatusType.Cancelled || reservation.status == ReservationStatusType.Completed) {
+        if (reservation.status == ReservationStatusType.Cancelled || reservation.status == ReservationStatusType.CheckedOut) {
             throw IllegalArgumentException("Cancelled or completed reservations cannot be paid")
         }
 

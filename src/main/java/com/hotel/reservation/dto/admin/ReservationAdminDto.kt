@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull
 
 class ReservationAdminDto(
     @field:NotNull
-    override val room: Room,
+    override var room: Room,
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     @field:NotNull
@@ -22,18 +22,11 @@ class ReservationAdminDto(
     override val checkOutTime: Date,
 
     @field:NotNull
-    val id: Int,
-
-    @field:NotNull
     val type: RoomType,
 
-    @field:NotNull
-    val status: ReservationStatusType,
+    val status: ReservationStatusType?,
 
-    @field:NotNull
-    val cost: Int,
+    val cost: Int?,
 
-    @field:NotNull
-    var otherCharges: Int,
-
-    ) : ReservationDto(room, checkInTime, checkOutTime) {}
+    var otherCharges: Int?,
+) : ReservationDto(room, checkInTime, checkOutTime) {}

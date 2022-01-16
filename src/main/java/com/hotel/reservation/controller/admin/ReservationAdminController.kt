@@ -4,6 +4,7 @@ import com.hotel.reservation.dto.ReservationDto
 import com.hotel.reservation.dto.admin.ReservationAdminDto
 import com.hotel.reservation.entity.Reservation
 import com.hotel.reservation.entity.Room
+import com.hotel.reservation.exception.DuplicateReservationException
 import com.hotel.reservation.repository.ReservationRepository
 import com.hotel.reservation.service.ReservationService
 import com.hotel.reservation.type.ReservationStatusType
@@ -25,9 +26,6 @@ class ReservationAdminController {
 
     @Autowired
     private lateinit var reservationService: ReservationService
-
-    @Autowired
-    private lateinit var entityManager: EntityManager
 
     @GetMapping("/admin/reservation")
     fun listReservations(
@@ -62,47 +60,20 @@ class ReservationAdminController {
         return "adminReservationList"
     }
 
-    @PostMapping("/admin/reservation")
+    @PostMapping("/admin/reservation/{reservation}")
     fun editReservation(
-        @ModelAttribute("reservation") reservationAdminDto: ReservationAdminDto
-    ): Map<String, Boolean> {
-        val reservation = reservationRepository.findById(reservationAdminDto.id).get()
-        var room = reservationAdminDto.room
-
-        if (reservationAdminDto.type != reservation.room.type) {
-            if (room.type != reservationAdminDto.type) {
-                val temp = reservationService.assignRoom(
-                    reservationAdminDto.type,
-                    reservationAdminDto.checkInTime,
-                    reservationAdminDto.checkOutTime
-                )
-                if (temp != null)
-                    room = temp
-            }
+        @PathVariable reservation: Reservation?,
+        @ModelAttribute("reservationAdminDto") reservationAdminDto: ReservationAdminDto
+    ): Map<String, Any> {
+        if (reservation == null)
+            throw IllegalArgumentException()
+        try {
+            reservationService.changeReservation(reservation, reservationAdminDto, validateStayTime = false, validateRoomType = false)
+        } catch (e: IllegalArgumentException) {
+            return mapOf("success" to false, "information" to e.message.toString())
+        } catch (e: DuplicateReservationException) {
+            return mapOf("success" to false, "information" to "assigned room is not available")
         }
-
-        val reservations = reservationRepository.findByRoomAndOverlappingStayTime(
-            room,
-            reservationAdminDto.checkInTime,
-            reservationAdminDto.checkOutTime
-        )
-
-        if (reservations.size > 1) {
-            return mapOf("success" to false)
-        } else if (reservations.size == 1) {
-            if (reservations[0].id != reservation.id) {
-                return mapOf("success" to false)
-            }
-        }
-
-        reservation.checkInTime = reservationAdminDto.checkInTime
-        reservation.checkOutTime = reservationAdminDto.checkOutTime
-        reservation.status = reservationAdminDto.status
-        reservation.room = room
-        reservation.cost = reservationAdminDto.cost
-        reservation.otherCharges = reservationAdminDto.otherCharges
-
-        reservationRepository.save(reservation)
-        return mapOf("success" to true)
+        return mapOf("success" to false, "information" to "")
     }
 }

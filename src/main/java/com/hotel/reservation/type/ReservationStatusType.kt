@@ -1,5 +1,5 @@
 package com.hotel.reservation.type
 
 enum class ReservationStatusType {
-    Pending, Reserved, CheckedIn, Completed, Cancelled
+    Pending, Reserved, CheckedIn, CheckedOut, Cancelled
 }

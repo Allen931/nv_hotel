@@ -2,6 +2,7 @@ package com.hotel.reservation.entity
 
 import com.hotel.reservation.type.UserLoyaltyType
 import com.hotel.reservation.type.UserPermissionType
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
@@ -30,7 +31,7 @@ class User(
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     val reservations: MutableList<Reservation> = ArrayList(),
-) {
+) : Serializable {
     constructor(name: String, loginName: String, passwordHash: String, permission: UserPermissionType = UserPermissionType.Customer)
             : this(null, name, loginName, passwordHash, permission) {}
 }

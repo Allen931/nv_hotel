@@ -1,12 +1,16 @@
 package com.hotel.reservation.controller.admin
 
 import com.hotel.reservation.entity.Payment
+import com.hotel.reservation.entity.Reservation
 import com.hotel.reservation.repository.PaymentRepository
 import com.hotel.reservation.repository.ReservationRepository
 import com.hotel.reservation.service.PaymentService
 import com.hotel.reservation.type.PaymentStatusType
+import com.hotel.reservation.type.RoomType
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
 
 @RestController
 class PaymentAdminController {
@@ -24,4 +28,26 @@ class PaymentAdminController {
         paymentService.refundPayment(payment)
         return mapOf("success" to true)
     }
+
+    @GetMapping("/admin/payment")
+    fun listPayments(
+        @RequestParam paymentStatusType: PaymentStatusType?,
+        @RequestParam reservation: Reservation?,
+        model: ModelMap
+    ): ModelAndView {
+        val payments = when ((paymentStatusType != null) to (reservation != null)) {
+            true to true -> paymentRepository.findAllByStatusAndReservation(paymentStatusType!!, reservation!!)
+            true to false -> paymentRepository.findAllByStatus(paymentStatusType!!)
+            false to true -> paymentRepository.findAllByReservation(reservation!!)
+            else -> paymentRepository.findAll()
+        }
+        model.addAttribute("payments", payments)
+        return ModelAndView("admin/listPayments")
+    }
+
+    @GetMapping("/admin/payment/{payment}")
+    fun showPayment(
+        @ModelAttribute @PathVariable payment: Payment,
+        model: ModelMap
+    ): ModelAndView = ModelAndView("admin/showPayment", model)
 }

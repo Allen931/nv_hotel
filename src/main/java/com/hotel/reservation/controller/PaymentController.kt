@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
+import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
 class PaymentController {
@@ -22,26 +23,32 @@ class PaymentController {
     fun createPayment(
         @PathVariable reservation: Reservation,
         @RequestParam amount: Int,
-        model: ModelMap
-    ): ModelAndView {
+        redirectAttributes: RedirectAttributes
+    ): String {
         val payment = paymentService.createPayment(reservation, amount)
-        model.addAttribute(payment)
 
-        return ModelAndView("redirect:/payment/pay/{payment}", model)
+        redirectAttributes.addAttribute("id", payment.id)
+        return "redirect:/payment/pay/{id}"
     }
 
     @RequestMapping("/payment/{payment}/pay")
-    fun pay(@PathVariable payment: Payment, @RequestParam creditCardNumber: String?, model: ModelMap): ModelAndView {
+    fun pay(
+        @PathVariable payment: Payment,
+        @RequestParam creditCardNumber: String?,
+        model: Model,
+        redirectAttributes: RedirectAttributes
+    ): String {
         if (creditCardNumber != null) {
             try {
                 paymentService.processPayment(payment, creditCardNumber)
-                model.addAttribute(payment.reservation)
-                return ModelAndView("redirect:/reservation/{reservation}", model)
+
+                redirectAttributes.addAttribute("id", payment.reservation.id)
+                return "redirect:/reservation/{id}"
             } catch (e: PaymentFailedException) {
                 model.addAttribute("error", e.message)
             }
         }
 
-        return ModelAndView("pay", model)
+        return "pay"
     }
 }

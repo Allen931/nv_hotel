@@ -13,7 +13,31 @@
                 <div class="banner_content text-center">
                     <tr th:each="reservation : ${reservations}">
                         <td th:text="${reservation.id}" />
+                        <li><a th:href="@{/reservation/} + ${reservation.id}" th:text="${reservation.id}"></a></li>
 
+                        <div class="section-top-border">
+                            <h3 class="mb-30 title_color">Left Aligned</h3>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <img src="image/elements/d.jpg" alt="" class="img-fluid">
+                                </div>
+                                <div class="col-md-9 mt-sm-20 left-align-p">
+                                    <p th:text="${reservation.id} + ${reservation.status}"></p>
+                                    <a th:href="@{/reservation/} + ${reservation.id}" class="genric-btn success-border">Detail</a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                <a href="#" class="card-link">Card link</a>
+                                <a href="#" class="card-link">Another link</a>
+                            </div>
+                        </div>
                     </tr>
                 </div>
             </div>

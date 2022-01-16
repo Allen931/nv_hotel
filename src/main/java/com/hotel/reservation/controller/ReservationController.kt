@@ -18,6 +18,7 @@ import org.springframework.ui.Model
 import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
+import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.lang.Exception
 import java.util.Date
 import javax.servlet.http.HttpServletRequest
@@ -63,8 +64,9 @@ class ReservationController {
         @PathVariable reservation: Reservation,
         @ModelAttribute reservationDto: ReservationDto,
         request: HttpServletRequest,
-        model: ModelMap
-    ): ModelAndView {
+        model: Model,
+        redirectAttributes: RedirectAttributes
+    ): String {
         if (request.method == "POST") {
             if (securityContext.currentUser!!.loyalty < UserLoyaltyType.Platinum &&
                 reservationDto.room?.roomNumber != reservation.room.roomNumber) {
@@ -72,8 +74,9 @@ class ReservationController {
             } else {
                 try {
                     reservationService.changeReservation(reservation, reservationDto, true)
-                    model.addAttribute(reservation)
-                    return ModelAndView("redirect:/reservation/{reservation}", model)
+
+                    redirectAttributes.addAttribute("id", reservation.id)
+                    return "redirect:/reservation/{id}"
                 } catch (e: DuplicateReservationException) {
                     model.addAttribute("error", "The chosen check-in and check-out time is not available")
                 }
@@ -83,7 +86,7 @@ class ReservationController {
         model.addAttribute("rooms", roomRepository.findAvailableRoomsByTypeAndStayTime(
             reservation.room.type, reservation.checkInTime, reservation.checkOutTime))
 
-        return ModelAndView("changeReservation", model)
+        return "changeReservation"
     }
 
     @GetMapping("/reservation/{reservation}/cancel")
@@ -99,13 +102,15 @@ class ReservationController {
         @PathVariable roomType: RoomType,
         @ModelAttribute("reservation") reservationDto: ReservationDto,
         request: HttpServletRequest,
-        model: ModelMap
-    ): ModelAndView {
+        model: Model,
+        redirectAttributes: RedirectAttributes
+    ): String {
         if (request.method == "POST") {
             try {
                 val reservation = reservationService.reserveRoom(securityContext.currentUser!!, roomType, reservationDto)
-                model.addAttribute(reservation)
-                return ModelAndView("redirect:/reservation/{reservation}", model)
+
+                redirectAttributes.addAttribute("id", reservation.id)
+                return "redirect:/reservation/{id}"
             } catch (e: Exception) {
                 when (e) {
                     is IllegalArgumentException -> model.addAttribute("error", e.message)
@@ -115,6 +120,6 @@ class ReservationController {
             }
         }
 
-        return ModelAndView("reserveRoom", model)
+        return "reserveRoom"
     }
 }
