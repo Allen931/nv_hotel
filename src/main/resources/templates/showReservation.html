@@ -8,20 +8,21 @@
 
     <section class="banner_area">
         <div class="booking_table d_flex align-items-center">
-
-            <div class="overlay bg-parallax" data-stellar-ratio="0.9" data-stellar-vertical-offset="0"
-                 data-background=""></div>
+            <div class="overlay bg-parallax" data-stellar-ratio="0.9" data-stellar-vertical-offset="0" data-background="" style="transform: translateY(0px);"></div>
             <div class="container">
-                <p th:text="${reservation.id}"></p>
-                <p th:text="${reservation.room.roomNumber}"></p>
-                <p th:text="${reservation.checkInTime}"></p>
-                <p th:text="${reservation.checkOutTime}"></p>
-                <p th:text="${reservation.status}"></p>
-                <!---
-                <th:block th:if="${reservation.status != reservationStatusType.Cancelled}"
-                --->
-                    <a th:href="@{/reservation/}+${reservation.id}+@{/cancel}" class="btn btn-danger">Cancel Reservation</a>
+                <div class="jumbotron">
+                    <h1 class="display-4">Reservation Detail</h1>
+                    <p class="lead" th:text="'Reservation id: '+${reservation.id}"></p>
+                    <hr class="my-4">
+                    <p class="lead" th:text="'Room number: '+${reservation.room.roomNumber}"></p>
+                    <p class="lead" th:text="'Check in time: '+${reservation.checkOutTime}"></p>
+                    <p class="lead" th:text="'Check out time: '+${reservation.checkOutTime}"></p>
+                    <p th:text="'Reservation status: '+${reservation.status}"></p>
 
+                    <p class="lead">
+                        <a th:href="@{/reservation/}+${reservation.id}+@{/cancel}" class="btn btn-danger">Cancel Reservation</a>
+                    </p>
+                </div>
             </div>
         </div>
     </section>
