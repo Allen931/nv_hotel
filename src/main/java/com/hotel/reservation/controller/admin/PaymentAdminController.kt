@@ -35,12 +35,7 @@ class PaymentAdminController {
         @RequestParam reservation: Reservation?,
         model: ModelMap
     ): ModelAndView {
-        val payments = when ((paymentStatusType != null) to (reservation != null)) {
-            true to true -> paymentRepository.findAllByStatusAndReservation(paymentStatusType!!, reservation!!)
-            true to false -> paymentRepository.findAllByStatus(paymentStatusType!!)
-            false to true -> paymentRepository.findAllByReservation(reservation!!)
-            else -> paymentRepository.findAll()
-        }
+        val payments = paymentRepository.findAllByStatusAndReservation(paymentStatusType, reservation)
         model.addAttribute("payments", payments)
         return ModelAndView("admin/listPayments")
     }

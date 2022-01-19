@@ -74,8 +74,7 @@ class ReservationService {
     @Transactional
     fun changeReservation(
         reservation: Reservation,
-        @Valid reservationDto: ReservationDto,
-        validateStayTime: Boolean = true
+        @Valid reservationDto: ReservationDto
     ) {
         if (reservationDto is ReservationAdminDto) {
             if (reservationDto.room == null) {
@@ -92,16 +91,12 @@ class ReservationService {
         } else {
             if (reservationDto.room!!.type != reservation.room.type)
                 throw IllegalArgumentException("Cannot change room across types")
-        }
 
-        if (validateStayTime) {
-            if ((reservationDto.checkInTime!!.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay() !=
-                        reservation.checkInTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                            .atStartOfDay()) &&
-                (reservationDto.checkOutTime!!.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                    .atStartOfDay() !=
-                        reservation.checkOutTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                            .atStartOfDay())
+            val zone = ZoneId.systemDefault()
+            if ((reservationDto.checkInTime!!.toInstant().atZone(zone).toLocalDate().atStartOfDay() !=
+                        reservation.checkInTime.toInstant().atZone(zone).toLocalDate().atStartOfDay()) &&
+                (reservationDto.checkOutTime!!.toInstant().atZone(zone).toLocalDate().atStartOfDay() !=
+                        reservation.checkOutTime.toInstant().atZone(zone).toLocalDate().atStartOfDay())
             ) {
                 throw IllegalArgumentException("Check-in and check-out date must stay the same")
             }
@@ -112,12 +107,7 @@ class ReservationService {
             )
         }
 
-        if (!roomService.isRoomAvailable(
-                reservationDto.room!!,
-                reservationDto.checkInTime!!,
-                reservationDto.checkOutTime!!
-            )
-        )
+        if (!roomService.isRoomAvailable(reservationDto.room!!, reservationDto.checkInTime!!, reservationDto.checkOutTime!!))
             throw DuplicateReservationException()
 
         modelMapper.map(reservationDto, reservation)

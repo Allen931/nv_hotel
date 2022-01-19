@@ -125,7 +125,7 @@ class ReservationController {
                 model.addAttribute("error", "Only platinum and ambassador users can pick room")
             } else {
                 try {
-                    reservationService.changeReservation(reservation, reservationDto, true)
+                    reservationService.changeReservation(reservation, reservationDto)
 
                     redirectAttributes.addAttribute("id", reservation.id)
                     return "redirect:/reservation/{id}"
@@ -137,6 +137,7 @@ class ReservationController {
 
         model.addAttribute("rooms", roomRepository.findAvailableRoomsByTypeAndStayTime(
             reservation.room.type, reservation.checkInTime, reservation.checkOutTime))
+        model.addAttribute("user", securityContext.currentUser!!)
 
         return "changeReservation"
     }

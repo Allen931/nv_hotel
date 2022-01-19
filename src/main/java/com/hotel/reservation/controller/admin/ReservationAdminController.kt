@@ -21,11 +21,9 @@ import javax.persistence.EntityManager
 @RestController
 @Secured
 class ReservationAdminController {
-    @Autowired
-    private lateinit var reservationRepository: ReservationRepository
+    @Autowired private lateinit var reservationRepository: ReservationRepository
 
-    @Autowired
-    private lateinit var reservationService: ReservationService
+    @Autowired private lateinit var reservationService: ReservationService
 
     @GetMapping("/admin/reservation")
     fun listReservations(
@@ -68,12 +66,12 @@ class ReservationAdminController {
         if (reservation == null)
             throw IllegalArgumentException()
         try {
-            reservationService.changeReservation(reservation, reservationAdminDto, validateStayTime = false, validateRoomType = false)
+            reservationService.changeReservation(reservation, reservationAdminDto)
+            return mapOf("success" to true)
         } catch (e: IllegalArgumentException) {
             return mapOf("success" to false, "information" to e.message.toString())
         } catch (e: DuplicateReservationException) {
-            return mapOf("success" to false, "information" to "assigned room is not available")
+            return mapOf("success" to false, "information" to "Assigned room is not available")
         }
-        return mapOf("success" to false, "information" to "")
     }
 }

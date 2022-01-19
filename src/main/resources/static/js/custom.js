@@ -70,7 +70,10 @@
 
     $('.date-time').datetimepicker({
         daysOfWeekDisabled: [0, 6],
-        format: 'yyyy-mm-dd hh:ii'
+        format: 'yyyy-mm-dd hh:ii',
+        startView: 'day',
+        minView: 'hour',
+        autoclose: true
     });
     
      /*---------gallery isotope js-----------*/

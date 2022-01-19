@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
+
+<div layout:fragment="content">
+
+    <section class="breadcrumb_area blog_banner_two">
+        <div class="overlay bg-parallax" data-stellar-ratio="0.8" data-stellar-vertical-offset="0" data-background=""></div>
+        <div class="container">
+            <div class="page-cover text-center">
+                <h2 class="page-cover-tittle f_48">Change Your Reservation</h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="sample-text-area">
+        <div class="container">
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+            <div class="d-flex justify-content-center">
+
+                <form th:action="@{/reservation/{id}/change(id = ${reservation.id})}" method="POST" autocomplete="off">
+                    <div class="form-group row mt-10">
+                        <label for="roomType">Room Type</label>
+                        <input type="text" name="roomType" class="single-input" id="roomType" disabled th:value="${reservation.room.type.toString()}">
+                    </div>
+
+                    <div th:height="72" class="form-group row mt-10 default-select" th:if="${user.loyalty == T(com.hotel.reservation.type.UserLoyaltyType).Ambassador}">
+                        <label for="room"> Room Number</label>
+                        <select name="room" id="room" class="form-select" aria-label="Default select example">
+                            <option selected th:text="${reservation.room.roomNumber}"></option>
+                            <tr th:each="room : ${rooms}">
+                                <option th:value="${room.roomNumber}" th:text="${room.roomNumber}"></option>
+                            </tr>
+                        </select>
+                    </div>
+
+                    <div class="form-group row mt-10">
+                        <label for="checkInTime">Check In Time</label>
+                        <input type="text" name="checkInTime" class="single-input date-time" id="checkInTime" th:value="${#dates.format(reservation.checkInTime, 'yyyy-MM-dd HH:mm')}">
+                    </div>
+                    <div class="form-group row mt-10">
+                        <label for="checkOutTime">Check Out Time</label>
+                        <input type="text" name="checkOutTime" class="single-input date-time" id="checkOutTime" th:value="${#dates.format(reservation.checkOutTime, 'yyyy-MM-dd HH:mm')}">
+                    </div>
+                    <div class="form-group row mt-10">
+                        <p th:if="${user.loyalty < T(com.hotel.reservation.type.UserLoyaltyType).Gold}">
+                            Your current loyalty status allows you to check in after 4PM and check out before 12PM. <br>
+                            Stay more with us, and earn yourself early check-in and late check-out!
+                        </p>
+                        <p th:if="${user.loyalty >= T(com.hotel.reservation.type.UserLoyaltyType).Gold}">
+                            Your current loyalty status allows you to check in after 12PM and check out before 4PM.
+                        </p>
+                    </div>
+                    <p th:text="${user.loyalty.toString()}"></p>
+                    <div class="form-group row mt-10">
+                        <button type="submit" class="genric-btn info">Make Reservation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+</html>

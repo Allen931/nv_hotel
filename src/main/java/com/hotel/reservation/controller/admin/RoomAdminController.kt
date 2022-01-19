@@ -31,6 +31,12 @@ class RoomAdminController {
         return ModelAndView("admin/listRooms")
     }
 
+    @GetMapping("/admin/room/{room}")
+    fun showRoom(
+        @ModelAttribute @PathVariable room: Room,
+        model: ModelMap
+    ): ModelAndView = ModelAndView("admin/showRoom", model)
+
     @PostMapping("/admin/room")
     fun createRoom(@ModelAttribute @Valid roomDto: RoomDto): Map<String, Boolean> {
         roomService.createRoom(roomDto)
@@ -56,11 +62,4 @@ class RoomAdminController {
         roomRepository.delete(room)
         return mapOf("success" to true)
     }
-
-    @GetMapping("/admin/room/{room}")
-    fun showRoom(
-        @ModelAttribute @PathVariable room: Room,
-        model: ModelMap
-    ): ModelAndView = ModelAndView("admin/showRoom", model)
-
 }
