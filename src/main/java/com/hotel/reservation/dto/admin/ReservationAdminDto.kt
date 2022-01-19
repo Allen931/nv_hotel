@@ -11,7 +11,7 @@ import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 
 class ReservationAdminDto(
-    override val room: Room?,
+    override var room: Room?,
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @field:NotNull

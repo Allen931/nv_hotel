@@ -78,12 +78,16 @@ class ReservationService {
         validateStayTime: Boolean = true
     ) {
         if (reservationDto is ReservationAdminDto) {
-            if (reservationDto.type != reservation.room.type && reservationDto.room == null) {
-                reservation.room = assignRoom(
+            if (reservationDto.room == null) {
+                reservationDto.room = assignRoom(
                     reservationDto.type!!,
                     reservationDto.checkInTime!!,
                     reservationDto.checkOutTime!!
                 ) ?: throw NoRoomsAvailableException()
+            } else {
+                if (reservationDto.room!!.type != reservationDto.type) {
+                    throw IllegalArgumentException("Assigned room type must match specified type")
+                }
             }
         } else {
             if (reservationDto.room!!.type != reservation.room.type)
