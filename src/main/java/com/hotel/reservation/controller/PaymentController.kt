@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.ModelMap
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
@@ -28,12 +25,12 @@ class PaymentController {
         val payment = paymentService.createPayment(reservation, amount)
 
         redirectAttributes.addAttribute("id", payment.id)
-        return "redirect:/payment/pay/{id}"
+        return "redirect:/payment/{id}/pay"
     }
 
     @RequestMapping("/payment/{payment}/pay")
     fun pay(
-        @PathVariable payment: Payment,
+        @ModelAttribute @PathVariable payment: Payment,
         @RequestParam creditCardNumber: String?,
         model: Model,
         redirectAttributes: RedirectAttributes

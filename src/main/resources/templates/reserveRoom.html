@@ -27,11 +27,20 @@
                     </div>
                     <div class="form-group row mt-10">
                         <label for="checkInTime">Check In Time</label>
-                        <input type="text" name="checkInTime" class="single-input" id="checkInTime" th:value="${#dates.format(reservation.checkInTime, 'yyyy-MM-dd HH:mm')}">
+                        <input type="text" name="checkInTime" class="single-input datetime" id="checkInTime" th:value="${#dates.format(reservation.checkInTime, 'yyyy-MM-dd HH:mm')}">
                     </div>
                     <div class="form-group row mt-10">
                         <label for="checkOutTime">Check Out Time</label>
-                        <input type="text" name="checkOutTime" class="single-input" id="checkOutTime" th:value="${#dates.format(reservation.checkOutTime, 'yyyy-MM-dd HH:mm')}">
+                        <input type="text" name="checkOutTime" class="single-input datetime" id="checkOutTime" th:value="${#dates.format(reservation.checkOutTime, 'yyyy-MM-dd HH:mm')}">
+                    </div>
+                    <div class="form-group row mt-10">
+                        <p th:if="${user.loyalty < T(com.hotel.reservation.type.UserLoyaltyType).Gold}">
+                            Your current loyalty status allows you to check in after 4PM and check out before 12PM. <br>
+                            Stay more with us, and earn yourself early check-in and late check-out!
+                        </p>
+                        <p th:if="${user.loyalty >= T(com.hotel.reservation.type.UserLoyaltyType).Gold}">
+                            Your current loyalty status allows you to check in after 12PM and check out before 4PM.
+                        </p>
                     </div>
                     <div class="form-group row mt-10">
                         <button type="submit" class="genric-btn info">Make Reservation</button>

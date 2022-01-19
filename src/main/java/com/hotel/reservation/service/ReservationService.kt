@@ -141,11 +141,21 @@ class ReservationService {
         return rooms[Random.nextInt(rooms.size)]
     }
 
-    private fun ensureValidCheckInCheckOutTime(user: User, checkInTime: Date, checkOutTime: Date) {
-        val currentTime = Date()
+    fun ensureValidCheckInCheckOutTime(user: User?, checkInTime: Date, checkOutTime: Date) {
+        val currentDate = Date()
+        currentDate.hours = 0
+        currentDate.minutes = 0
+        currentDate.seconds = 0
 
-        if (checkInTime.before(currentTime) || checkOutTime.before(currentTime))
-            throw IllegalArgumentException("Check in time and check out time must be in the future")
+        val checkInTimeAtStart = checkInTime.clone() as Date
+        val checkOutTimeAtStart = checkOutTime.clone() as Date
+        checkInTimeAtStart.hours = 0
+        checkInTimeAtStart.minutes = 1
+        checkOutTimeAtStart.hours = 0
+        checkOutTimeAtStart.minutes = 1
+
+        if (checkInTimeAtStart.before(currentDate) || checkOutTimeAtStart.before(currentDate))
+            throw IllegalArgumentException("Check in time and check out time must not be in the past")
 
         if (checkOutTime.before(checkInTime))
             throw IllegalArgumentException("Check out time must be later than check in time")
@@ -158,7 +168,7 @@ class ReservationService {
         if (days <= 0)
             throw IllegalArgumentException("Stay time must be more than 1 day")
 
-        if (user.loyalty < UserLoyaltyType.Gold) {
+        if (user == null || user.loyalty < UserLoyaltyType.Gold) {
             if (checkInTime.hours < 16) throw IllegalArgumentException("Check in time must be after 4PM")
             if (checkOutTime.hours >= 12) throw IllegalArgumentException("Check out time must be before 12PM")
         } else {

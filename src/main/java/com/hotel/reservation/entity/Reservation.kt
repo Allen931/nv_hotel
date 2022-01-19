@@ -45,5 +45,6 @@ class Reservation(
     constructor(user: User, room: Room, cost: Int, checkInTime: Date, checkOutTime: Date, status: ReservationStatusType = ReservationStatusType.Pending)
             : this(null, user, room, cost, 0, checkInTime, checkOutTime, status) {}
 
-    val fullyPaid: Boolean get() = payments.sumOf { if (it.status == PaymentStatusType.Paid) it.amount else 0 } >= cost + otherCharges
+    val remainingAmount: Int get() = cost + otherCharges - payments.sumOf { if (it.status == PaymentStatusType.Paid) it.amount else 0 }
+    val fullyPaid: Boolean get() = remainingAmount <= 0
 }

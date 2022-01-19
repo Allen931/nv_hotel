@@ -14,6 +14,7 @@
                 </div>
             </div>
         </div>
+
         <div class="hotel_booking_area position" id="book-section">
             <div class="container">
                 <div class="hotel_booking_table">
@@ -62,9 +63,13 @@
         </div>
     </section>
 
-    <section class="sample-text-area" style="padding-top: 0" th:if="${roomAvailability}">
+    <section class="sample-text-area" style="padding-top: 0">
         <div class="container">
-            <div class="section-top-border">
+            <div class="section-top-border" th:if="${error}">
+                <div class="alert alert-danger" role="alert" th:text="${error}"></div>
+            </div>
+
+            <div class="section-top-border" th:if="${roomAvailability}">
                 <h3 class="mb-30 title_color">Availability</h3>
                 <div class="progress-table-wrap">
                     <div class="progress-table">

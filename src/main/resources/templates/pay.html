@@ -1,10 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Pay</title>
-</head>
-<body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template">
 
-</body>
+<div layout:fragment="content">
+
+    <section class="breadcrumb_area blog_banner_two">
+        <div class="overlay bg-parallax" data-stellar-ratio="0.8" data-stellar-vertical-offset="0" data-background=""></div>
+        <div class="container">
+            <div class="page-cover text-center">
+                <h2 class="page-cover-tittle f_48">Payment</h2>
+            </div>
+        </div>
+    </section>
+
+    <section class="sample-text-area">
+        <div class="container">
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+            <div class="d-flex justify-content-center">
+                <form method="post">
+                    <div class="form-group row mt-10">
+                        <label for="amount">Payment Amount</label>
+                        <input type="text" disabled class="single-input" id="amount" th:value="'$' + ${payment.amount}">
+                    </div>
+                    <div class="form-group row mt-10">
+                        <label for="creditCardNumber">Credit Card No.</label>
+                        <input type="text" name="creditCardNumber" class="single-input" id="creditCardNumber" placeholder="Your credit card">
+                    </div>
+                    <div class="form-group row mt-10">
+                        <button type="submit" value="Sign In" class="genric-btn info">Pay</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+</div>
 </html>

@@ -6,22 +6,84 @@
 
 <div layout:fragment="content">
 
-    <section class="banner_area">
-        <div class="booking_table d_flex align-items-center">
-            <div class="overlay bg-parallax" data-stellar-ratio="0.9" data-stellar-vertical-offset="0" data-background="" style="transform: translateY(0px);"></div>
-            <div class="container">
-                <div class="jumbotron">
-                    <h1 class="display-4">Reservation Detail</h1>
-                    <p class="lead" th:text="'Reservation id: '+${reservation.id}"></p>
-                    <hr class="my-4">
-                    <p class="lead" th:text="'Room number: '+${reservation.room.roomNumber}"></p>
-                    <p class="lead" th:text="'Check in time: '+${reservation.checkInTime}"></p>
-                    <p class="lead" th:text="'Check out time: '+${reservation.checkOutTime}"></p>
-                    <p th:text="'Reservation status: '+${reservation.status}"></p>
+    <section class="breadcrumb_area blog_banner_two">
+        <div class="overlay bg-parallax" data-stellar-ratio="0.8" data-stellar-vertical-offset="0" data-background=""></div>
+        <div class="container">
+            <div class="banner_content text-center">
+                <h2>Your Reservation</h2>
+            </div>
+        </div>
+    </section>
 
-                    <p class="lead" th:if="${reservation.status != T(com.hotel.reservation.type.ReservationStatusType).Cancelled}">
-                        <a th:href="@{/reservation/{id}/cancel(id = ${reservation.id})}" class="btn btn-danger">Cancel Reservation</a>
+    <section class="sample-text-area">
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="display-4">Reservation Detail</h1>
+                <p class="lead" th:text="'Reservation Number: '+${reservation.id}"></p>
+
+                <hr class="my-4">
+                <p class="lead" th:text="'Room number: '+${reservation.room.roomNumber}"></p>
+                <p class="lead" th:text="'Check in time: '+${#dates.format(reservation.checkInTime, 'yyyy-MM-dd HH:mm')}"></p>
+                <p class="lead" th:text="'Check out time: '+${#dates.format(reservation.checkOutTime, 'yyyy-MM-dd HH:mm')}"></p>
+
+                <hr class="my-4">
+                <p class="lead" th:text="'Total charge: $'+${reservation.cost}"></p>
+                <th:block th:if="${reservation.status != T(com.hotel.reservation.type.ReservationStatusType).Cancelled}">
+                    <p class="lead" th:text="'Remaining payment: $'+${reservation.remainingAmount}"></p>
+                    <p class="lead">
+                        <a th:href="@{/payment/create/{id}(id = ${reservation.id}, amount = ${reservation.remainingAmount})}" th:if="${!reservation.fullyPaid}" class="genric-btn success">
+                            Make Payment
+                        </a>
                     </p>
+                </th:block>
+
+                <hr class="my-4">
+                <p class="lead" th:text="'Reservation status: '+${reservation.status}"></p>
+                <p th:if="${reservation.status == T(com.hotel.reservation.type.ReservationStatusType).Pending}">
+                    Your reservation is now pending. You must pay before your reservation is confirmed. <br>
+                    Silver loyalty members can reserve without payment. Stay more with us to enable post-paid reservations.
+                </p>
+
+                <p class="lead" th:if="${reservation.status != T(com.hotel.reservation.type.ReservationStatusType).Cancelled}">
+                    <a th:href="@{/reservation/{id}/cancel(id = ${reservation.id})}" class="genric-btn danger">Cancel Reservation</a>
+                </p>
+            </div>
+
+            <div class="section-top-border" th:if="${!reservation.payments.empty}">
+                <h3 class="mb-30 title_color">Payments</h3>
+                <div class="progress-table-wrap">
+                    <div class="progress-table">
+                        <div class="table-head">
+                            <div class="payment-amount">Amount</div>
+                            <div class="payment-status">Status</div>
+                            <div class="payment-date">Paid Date</div>
+                            <div class="payment-option">Option</div>
+                        </div>
+                        <div class="table-row" th:each="payment : ${reservation.payments}">
+                            <div class="payment-amount" th:text="'$' + ${payment.amount}"></div>
+                            <div class="payment-status" th:text="${payment.status}"></div>
+                            <div class="payment-date" th:text="${#dates.format(payment.paymentTime, 'yyyy-MM-dd HH:mm')}"></div>
+                            <div class="payment-option">
+                                <a th:href="@{/payment/{id}/pay(id = ${payment.id})}"
+                                   class="genric-btn primary-border"
+                                   th:if="${payment.status == T(com.hotel.reservation.type.PaymentStatusType).Pending}">
+                                    Pay Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        .table-head {
+                            color: #222222;
+                            line-height: 40px;
+                            text-transform: uppercase;
+                            font-weight: 500;
+                        }
+                        .payment-amount { width: 15%; padding-left: 50px; }
+                        .payment-status { width: 15%; }
+                        .payment-date { width: 50%; }
+                        .payment-option { width: 20%; }
+                    </style>
                 </div>
             </div>
         </div>

@@ -45,13 +45,19 @@ class ReservationController {
             checkOutTime.hours = 11
             checkOutTime.minutes = 59
 
-            val roomAvailability = roomRepository.findAvailableRoomsByTypeAndStayTime(type, checkInTime, checkOutTime)
-                .groupBy { it.type }.mapValues { it.value.size }.mapKeys { it.key.toString() }
-
-            model.addAttribute("roomAvailability", roomAvailability)
-
             model.addAttribute("checkInTime", checkInTime)
             model.addAttribute("checkOutTime", checkOutTime)
+
+            try {
+                reservationService.ensureValidCheckInCheckOutTime(securityContext.currentUser, checkInTime, checkOutTime)
+
+                val roomAvailability = roomRepository.findAvailableRoomsByTypeAndStayTime(type, checkInTime, checkOutTime)
+                    .groupBy { it.type }.mapValues { it.value.size }.mapKeys { it.key.toString() }
+
+                model.addAttribute("roomAvailability", roomAvailability)
+            } catch (e: IllegalArgumentException) {
+                model.addAttribute("error", e.message)
+            }
         }
 
         return "roomAvailability"
@@ -80,6 +86,8 @@ class ReservationController {
                 }
             }
         }
+
+        model.addAttribute("user", securityContext.currentUser!!)
 
         return "reserveRoom"
     }
@@ -131,8 +139,9 @@ class ReservationController {
 
     @GetMapping("/reservation/{reservation}/cancel")
     @Secured
-    fun cancelReservation(@PathVariable reservation: Reservation): String {
+    fun cancelReservation(@PathVariable reservation: Reservation, redirectAttributes: RedirectAttributes): String {
         reservationService.cancelReservation(reservation)
-        return "redirect:/reservation"
+        redirectAttributes.addAttribute("id", reservation.id)
+        return "redirect:/reservation/{id}"
     }
 }

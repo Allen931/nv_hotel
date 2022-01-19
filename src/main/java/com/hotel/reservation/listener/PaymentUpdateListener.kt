@@ -1,9 +1,7 @@
 package com.hotel.reservation.listener
 
 import com.hotel.reservation.entity.Payment
-import com.hotel.reservation.repository.ReservationRepository
 import com.hotel.reservation.type.ReservationStatusType
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import javax.persistence.PostPersist
@@ -11,8 +9,6 @@ import javax.persistence.PostUpdate
 
 @Component
 class PaymentUpdateListener {
-    @Autowired private lateinit var reservationRepository: ReservationRepository
-
     @PostPersist
     @PostUpdate
     @Transactional
@@ -21,7 +17,6 @@ class PaymentUpdateListener {
         if (payment.reservation.status == ReservationStatusType.Pending) {
             if (payment.reservation.fullyPaid) {
                 payment.reservation.status = ReservationStatusType.Reserved
-                reservationRepository.save(payment.reservation)
             }
         }
     }

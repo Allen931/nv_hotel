@@ -20,7 +20,6 @@ class Payment(
     @Column(nullable = false)
     var amount: Int,
 
-    @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     var paymentTime: Date? = null,
 
