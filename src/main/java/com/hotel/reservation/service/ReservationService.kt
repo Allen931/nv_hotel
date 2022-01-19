@@ -75,25 +75,21 @@ class ReservationService {
     fun changeReservation(
         reservation: Reservation,
         @Valid reservationDto: ReservationDto,
-        validateStayTime: Boolean = true,
-        validateRoomType: Boolean = true
+        validateStayTime: Boolean = true
     ) {
         if (reservationDto is ReservationAdminDto) {
-            if (reservationDto.type != reservation.room.type) {
-                if (reservationDto.room.type != reservationDto.type) {
-                    val temp = assignRoom(
-                        reservationDto.type,
-                        reservationDto.checkInTime,
-                        reservationDto.checkOutTime
-                    ) ?: throw IllegalArgumentException("No available rooms")
-                    reservationDto.room = temp
-                }
+            if (reservationDto.type != reservation.room.type && reservationDto.room == null) {
+                reservation.room = assignRoom(
+                    reservationDto.type!!,
+                    reservationDto.checkInTime!!,
+                    reservationDto.checkOutTime!!
+                ) ?: throw NoRoomsAvailableException()
             }
+        } else {
+            if (reservationDto.room!!.type != reservation.room.type)
+                throw IllegalArgumentException("Cannot change room across types")
         }
 
-        if (validateRoomType)
-                if (reservationDto.room!!.type != reservation.room.type)
-                    throw IllegalArgumentException("Cannot change room across types")
         if (validateStayTime) {
             if ((reservationDto.checkInTime!!.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay() !=
                         reservation.checkInTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()

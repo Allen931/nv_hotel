@@ -70,7 +70,7 @@
 
     $('.date-time').datetimepicker({
         daysOfWeekDisabled: [0, 6],
-        format: 'yyyy-mm-dd hh:mm'
+        format: 'yyyy-mm-dd hh:ii'
     });
     
      /*---------gallery isotope js-----------*/
