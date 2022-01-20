@@ -14,37 +14,8 @@ import javax.servlet.http.HttpServletRequest
 
 @Controller
 class IndexAdminController {
-    @Autowired private lateinit var userService: UserService
-    @Autowired private lateinit var securityContext: SecurityContext
-
     @GetMapping("/admin")
     fun index(): String {
-        return "admin/template"
+        return "admin/index"
     }
-
-//    @GetMapping("/admin/login")
-//    fun login(): String {
-//        if (securityContext.currentUser != null)
-//            return "redirect:/reservation"
-//
-//        return "admin/login"
-//    }
-
-//    @RequestMapping("/admin/register")
-//    fun register(
-//        @ModelAttribute("user") userDto: UserDto,
-//        model: Model,
-//        request: HttpServletRequest
-//    ): String {
-//        if (request.method == "POST") {
-//            try {
-//                val user = userService.register(userDto)
-//                return "redirect:/login"
-//            } catch (e: UserAlreadyExistsException) {
-//                model.addAttribute("error", "User already exists!")
-//            }
-//        }
-//
-//        return "register"
-//    }
 }
