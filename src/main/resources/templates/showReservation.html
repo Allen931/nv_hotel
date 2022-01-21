@@ -44,7 +44,8 @@
                     Silver loyalty members can reserve without payment. Stay more with us to enable post-paid reservations.
                 </p>
 
-                <p class="lead" th:if="${reservation.status != T(com.hotel.reservation.type.ReservationStatusType).Cancelled}">
+                <p class="lead" th:if="${reservation.status <= T(com.hotel.reservation.type.ReservationStatusType).Reserved}">
+                    <a th:href="@{/reservation/{id}/change(id = ${reservation.id})}" class="genric-btn info">Change Reservation</a>
                     <a th:href="@{/reservation/{id}/cancel(id = ${reservation.id})}" class="genric-btn danger">Cancel Reservation</a>
                 </p>
             </div>

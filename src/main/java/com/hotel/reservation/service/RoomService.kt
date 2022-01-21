@@ -1,6 +1,7 @@
 package com.hotel.reservation.service
 
 import com.hotel.reservation.dto.RoomDto
+import com.hotel.reservation.entity.Reservation
 import com.hotel.reservation.entity.Room
 import com.hotel.reservation.repository.ReservationRepository
 import com.hotel.reservation.repository.RoomRepository
@@ -17,8 +18,8 @@ class RoomService {
     @Autowired private lateinit var reservationRepository: ReservationRepository
     @Autowired private lateinit var roomRepository: RoomRepository
 
-    fun isRoomAvailable(room: Room, checkInTime: Date, checkOutTime: Date) =
-        reservationRepository.findByRoomAndOverlappingStayTime(room, checkInTime, checkOutTime).isEmpty()
+    fun isRoomAvailable(room: Room, checkInTime: Date, checkOutTime: Date, ignoredReservation: Reservation? = null) =
+        reservationRepository.findByRoomAndOverlappingStayTimeIgnoringReservation(room, checkInTime, checkOutTime, ignoredReservation).isEmpty()
 
     @Transactional
     fun createRoom(@Valid roomDto: RoomDto): Room {

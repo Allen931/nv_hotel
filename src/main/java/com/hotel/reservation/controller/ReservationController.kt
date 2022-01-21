@@ -8,6 +8,7 @@ import com.hotel.reservation.repository.ReservationRepository
 import com.hotel.reservation.repository.RoomRepository
 import com.hotel.reservation.security.SecurityContext
 import com.hotel.reservation.service.ReservationService
+import com.hotel.reservation.type.ReservationStatusType
 import com.hotel.reservation.type.RoomType
 import com.hotel.reservation.type.UserLoyaltyType
 import org.springframework.beans.factory.annotation.Autowired
@@ -119,6 +120,9 @@ class ReservationController {
         model: Model,
         redirectAttributes: RedirectAttributes
     ): String {
+        if (reservation.status > ReservationStatusType.Reserved || reservation.user.id != securityContext.currentUser!!.id)
+            throw AccessDeniedException("You cannot modify this reservation")
+
         if (request.method == "POST") {
             if (securityContext.currentUser!!.loyalty < UserLoyaltyType.Platinum &&
                 reservationDto.room?.roomNumber != reservation.room.roomNumber) {
@@ -145,6 +149,9 @@ class ReservationController {
     @GetMapping("/reservation/{reservation}/cancel")
     @Secured
     fun cancelReservation(@PathVariable reservation: Reservation, redirectAttributes: RedirectAttributes): String {
+        if (reservation.status > ReservationStatusType.Reserved || reservation.user.id != securityContext.currentUser!!.id)
+            throw AccessDeniedException("You cannot cancel this reservation")
+
         reservationService.cancelReservation(reservation)
         redirectAttributes.addAttribute("id", reservation.id)
         return "redirect:/reservation/{id}"

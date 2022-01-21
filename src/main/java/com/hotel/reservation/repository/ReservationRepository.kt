@@ -34,10 +34,13 @@ interface ReservationRepository : CrudRepository<Reservation, Int> {
                 WHERE r.room = :room 
                 AND r.checkOutTime > :checkInTime 
                 AND r.checkInTime < :checkOutTime 
-                AND r.status <> com.hotel.reservation.type.ReservationStatusType.Cancelled""")
-    fun findByRoomAndOverlappingStayTime(
+                AND r.status <> com.hotel.reservation.type.ReservationStatusType.Cancelled
+                AND r <> :ignoredReservation
+                """)
+    fun findByRoomAndOverlappingStayTimeIgnoringReservation(
         @Param("room") room: Room,
         @Param("checkInTime") checkInTime: Date,
-        @Param("checkOutTime") checkOutTime: Date
+        @Param("checkOutTime") checkOutTime: Date,
+        @Param("ignoredReservation") ignoredReservation: Reservation?
     ): List<Reservation>
 }

@@ -107,7 +107,7 @@ class ReservationService {
             )
         }
 
-        if (!roomService.isRoomAvailable(reservationDto.room!!, reservationDto.checkInTime!!, reservationDto.checkOutTime!!))
+        if (!roomService.isRoomAvailable(reservationDto.room!!, reservationDto.checkInTime!!, reservationDto.checkOutTime!!, reservation))
             throw DuplicateReservationException()
 
         modelMapper.map(reservationDto, reservation)
