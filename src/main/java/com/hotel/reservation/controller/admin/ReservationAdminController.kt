@@ -101,8 +101,8 @@ class ReservationAdminController {
             val information = "Assigned room is not available"
             model.addAttribute("information", information)
         }
-        model.addAttribute("reservation", reservationRepository.findById(reservation.id!!).get())
 
+        model.addAttribute("reservation", reservationRepository.findById(reservation.id!!).get())
         return ModelAndView("admin/editReservation", model)
     }
 }
