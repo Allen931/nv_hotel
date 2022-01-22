@@ -15,15 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.lang.Exception
-import java.text.SimpleDateFormat
 import java.util.Date
 import javax.servlet.http.HttpServletRequest
 
@@ -64,6 +60,29 @@ class ReservationController {
         }
 
         return "roomAvailability"
+    }
+
+    @RequestMapping("/reservation/roomAvailabilityQuery")
+    @ResponseBody
+    fun roomAvailabilityQuery(
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") checkInTime: Date?,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") checkOutTime: Date?,
+        @RequestParam type: RoomType?,
+    ): List<Room>? {
+        if (checkInTime != null && checkOutTime != null) {
+            // Set check-in and check-out time to default options
+            checkInTime.hours = 16
+            checkInTime.minutes = 0
+            checkOutTime.hours = 11
+            checkOutTime.minutes = 59
+            try {
+                reservationService.ensureValidCheckInCheckOutTime(securityContext.currentUser, checkInTime, checkOutTime)
+                val rooms = roomRepository.findAvailableRoomsByTypeAndStayTime(type, checkInTime, checkOutTime)
+                return rooms
+            } catch (e: IllegalArgumentException) {
+            }
+        }
+        return null
     }
 
     @RequestMapping("/reservation/reserve/{roomType}")
