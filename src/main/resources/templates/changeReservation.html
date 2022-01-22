@@ -21,7 +21,32 @@
 
             <div class="d-flex justify-content-center">
 
-                <form th:action="@{/reservation/{id}/change(id = ${reservation.id})}" method="POST" autocomplete="off">
+                <script type="text/javascript"
+                        src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
+
+                <script type="text/javascript">
+                    function roomAvailability() {
+                        let RoomDto = $('roomForm')
+                        $.ajax({
+                            type: 'POST',
+                            url: '/reservation/roomAvailability',
+                            data: {
+                                roomType: RoomDto.roomType,
+                                checkInTime: RoomDto.checkInTime,
+                                checkOutTime: RoomDto.checkOutTime
+                            },
+                            contentType: "application/json",
+                            success: function(data) {
+                                alert("test");
+                            },
+                            error: function(request, status, error) {
+                                alert("Error : " + error + "\nStatus : " + status + "\nRequest : " + request);
+                            }
+                        });
+                    }
+                </script>
+
+                <form id="roomForm" th:action="@{/reservation/{id}/change(id = ${reservation.id})}" method="POST" autocomplete="off">
                     <div class="form-group row mt-10">
                         <label for="roomType">Room Type</label>
                         <input type="text" name="roomType" class="single-input" id="roomType" disabled th:value="${reservation.room.type.toString()}">
