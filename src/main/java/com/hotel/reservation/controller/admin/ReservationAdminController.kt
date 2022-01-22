@@ -98,5 +98,6 @@ class ReservationAdminController {
             information = "Assigned room is not available"
         }
         model.addAttribute("reservation", reservation)
+        return ModelAndView("admin/changeReservation", model)
     }
 }
