@@ -1,9 +1,7 @@
 package com.hotel.reservation.controller.admin
 
-import com.hotel.reservation.dto.ReservationDto
 import com.hotel.reservation.dto.admin.ReservationAdminDto
 import com.hotel.reservation.entity.Reservation
-import com.hotel.reservation.entity.Room
 import com.hotel.reservation.exception.DuplicateReservationException
 import com.hotel.reservation.repository.ReservationRepository
 import com.hotel.reservation.service.ReservationService
@@ -15,8 +13,8 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.security.access.annotation.Secured
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
 import java.util.*
-import javax.persistence.EntityManager
 
 @RestController
 @Secured
@@ -36,7 +34,7 @@ class ReservationAdminController {
         @RequestParam sortBy: String? = null,
         @RequestParam order: String? = null,
         model: Model
-    ): String {
+    ): ModelAndView {
         var sort: Sort = when (sortBy) {
             "id" -> Sort.by("id")
             "checkOutTime" -> Sort.by("checkOutTime")
@@ -53,9 +51,11 @@ class ReservationAdminController {
         val reservations = reservationRepository.filterReservations(
             username, id, type, checkInTime, checkOutTime, status, sort
         )
-        model.addAttribute("reservation", reservations)
 
-        return "adminReservationList"
+        val model = ModelAndView("admin/listReservations")
+        model.addObject(reservations)
+
+        return model
     }
 
     @PostMapping("/admin/reservation/{reservation}")

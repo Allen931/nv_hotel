@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="admin/template">
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Reservation</h1>
+        <form class="form-inline" role="search" action="/reservation" method="get" target="_blank">
+            <div class="form-group">
+                <input name="username" class="form-control mr-sm-2" type="text" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input name="id" class="form-control mr-sm-2" type="text" placeholder="User ID">
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="type">
+                    <option></option>
+                    <option>Economy</option>
+                    <option>Business</option>
+                    <option>Luxury</option>
+                    <option>Suite</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <div class="input-group date" id="datetimepicker11">
+                    <input type="text" name="checkInTime" class="form-control" placeholder="Arrival Date">
+                    <span class="input-group-addon">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                            </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="status">
+                    <option></option>
+                    <option>Pending</option>
+                    <option>Reserved</option>
+                    <option>CheckedIn</option>
+                    <option>CheckedOut</option>
+                    <option>Cancelled</option>
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+</html>
