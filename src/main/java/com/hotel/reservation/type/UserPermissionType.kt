@@ -1,5 +1,5 @@
 package com.hotel.reservation.type
 
 enum class UserPermissionType {
-    Customer, Admin
+    Removed, Customer, Admin
 }

@@ -1,10 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Rooms</title>
-</head>
-<body>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="admin/template">
 
-</body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Rooms</h1>
+        <div th:if="${information}" class="alert-info info-border" role="alert" th:text="${information}"></div>
+        <form class="form-inline" role="search" action="/admin/room" method="get">
+            <div class="form-group">
+                <select class="form-control" name="roomType">
+                    <option value="">Room Type</option>
+                    <option value="Economy" th:selected="${#request.getParameter('roomType') eq 'Economy'}">Economy</option>
+                    <option value="Business" th:selected="${#request.getParameter('roomType') eq 'Business'}">Business</option>
+                    <option value="Luxury" th:selected="${#request.getParameter('roomType') eq 'Luxury'}">Luxury</option>
+                    <option value="Suite" th:selected="${#request.getParameter('roomType') eq 'Suite'}">Suite</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a class="btn btn-success" href="/admin/room/create">Create</a>
+        </form>
+        <div class="m-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Room Number</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="room : ${rooms}">
+                        <td> <span th:text="${room.roomNumber}"></span> </td>
+                        <td> <span th:text="${room.type}"></span> </td>
+                        <td> <span th:text="${room.price}"></span> </td>
+                        <td>
+                            <a class="btn btn-info btn-circle btn-sm" th:href="@{/admin/room/} + ${room.roomNumber}">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                            <button href="#" class="btn btn-danger btn-circle btn-sm" th:attr="onclick=|$('#deleteForm' + ${room.roomNumber})[0].submit()|">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                        <form name="deleteForm" method="POST" th:action="@{/admin/room/delete/} + ${room.roomNumber} " th:id="deleteForm + ${room.roomNumber}"></form>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 </html>

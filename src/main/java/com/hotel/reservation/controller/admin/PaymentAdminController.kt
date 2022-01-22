@@ -24,9 +24,7 @@ class PaymentAdminController {
         @PathVariable payment: Payment,
         model: ModelMap
     ): ModelAndView {
-        val reservation = payment.reservation
-        val status = payment.status
-        val payments = paymentRepository.findAllByStatusAndReservation(status, reservation)
+        val payments = paymentRepository.findAllByStatusAndReservation(null, null)
         try {
             paymentService.processPayment(payment, null)
             model.addAttribute("information", "Pay Successfully")
@@ -42,9 +40,7 @@ class PaymentAdminController {
         @PathVariable payment: Payment,
         model: ModelMap
     ): ModelAndView {
-        val reservation = payment.reservation
-        val status = payment.status
-        val payments = paymentRepository.findAllByStatusAndReservation(status, reservation)
+        val payments = paymentRepository.findAllByStatusAndReservation(null, null)
         try {
             paymentService.refundPayment(payment)
             model.addAttribute("information", "Pay Successfully")
@@ -55,10 +51,10 @@ class PaymentAdminController {
         return ModelAndView("admin/listPayments", model)
     }
 
-    @GetMapping("/admin/payment/{reservation}")
+    @GetMapping("/admin/payment")
     fun listPayments(
         @RequestParam paymentStatusType: PaymentStatusType?,
-        @PathVariable reservation: Reservation?,
+        @RequestParam reservation: Reservation?,
         model: ModelMap
     ): ModelAndView {
         val payments = paymentRepository.findAllByStatusAndReservation(paymentStatusType, reservation)

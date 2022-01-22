@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="admin/template">
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">User Detail</h1>
+        <div th:if="${information}" class="alert-info info-border" role="alert" th:text="${information}"></div>
+        <form role="search" th:action="@{/admin/user/} + ${user.id}" method="post">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input id="name" name="name" class="form-control mr-sm-2" type="text" placeholder="Name" th:value="${user.name}">
+            </div>
+            <div class="form-group">
+                <label for="id">Name</label>
+                <input id="id" name="id" class="form-control mr-sm-2" type="text" placeholder="ID" th:value="${user.id}" readonly>
+            </div>
+            <div class="form-group">
+                <select class="form-control" name="permission">
+                    <option value="">Permission Type</option>
+                    <option value="Removed" th:selected="${user.permission.toString() eq 'Removed'}">Removed</option>
+                    <option value="Customer" th:selected="${user.permission.toString() eq 'Customer'}">Customer</option>
+                    <option value="Admin" th:selected="${user.permission.toString() eq 'Admin'}">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="form-control" name="loyalty">
+                    <option value="">Customer Loyalty</option>
+                    <option value="Member" th:selected="${user.loyalty.toString() eq 'Member'}">Member</option>
+                    <option value="Silver" th:selected="${user.loyalty.toString() eq 'Silver'}">Silver</option>
+                    <option value="Gold" th:selected="${user.loyalty.toString() eq 'Gold'}">Gold</option>
+                    <option value="Platinum" th:selected="${user.loyalty.toString() eq 'Platinum'}">Platinum</option>
+                    <option value="Titanium" th:selected="${user.loyalty.toString() eq 'Titanium'}">Titanium</option>
+                    <option value="Ambassador" th:selected="${user.loyalty.toString() eq 'Ambassador'}">Ambassador</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </form>
+    </div>
+</div>
+</html>

@@ -1,20 +1,18 @@
 package com.hotel.reservation.controller.admin
 
 import com.hotel.reservation.dto.RoomDto
-import com.hotel.reservation.entity.Payment
 import com.hotel.reservation.entity.Room
 import com.hotel.reservation.repository.RoomRepository
 import com.hotel.reservation.service.RoomService
 import com.hotel.reservation.type.RoomType
-import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
 import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
-import java.lang.Exception
 import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
+import kotlin.Exception
 
 @RestController
 @Secured("ROLE_ADMIN")
@@ -31,29 +29,80 @@ class RoomAdminController {
         return ModelAndView("admin/listRooms")
     }
 
-    @PostMapping("/admin/room")
-    fun createRoom(@ModelAttribute @Valid roomDto: RoomDto): Map<String, Boolean> {
-        roomService.createRoom(roomDto)
-        return mapOf("success" to true)
-    }
 
-    @PostMapping("/admin/room/{room}")
+    @RequestMapping("/admin/room/{room}")
     fun editRoom(
         @PathVariable room: Room?,
-        @ModelAttribute @Valid roomDto: RoomDto
-    ): Map<String, Any> {
-        try {
-            roomService.editRoom(room, roomDto)
-        } catch (e: IllegalArgumentException) {
-            return mapOf("success" to false, "information" to e.message.toString())
-        }
+        @ModelAttribute @Valid roomDto: RoomDto,
+        request: HttpServletRequest,
+        model: ModelMap
+    ): ModelAndView {
+        if (room == null)
+            throw IllegalArgumentException()
 
-        return mapOf("success" to true)
+        var newRoom = room
+        try {
+            if (request.method == "POST") {
+                roomService.editRoom(room, roomDto)
+                val information = "success"
+                model.addAttribute("information", information)
+                newRoom = roomRepository.findByRoomNumber(roomDto.roomNumber!!)
+            }
+        } catch (e: IllegalArgumentException) {
+            val information = e.message.toString()
+            model.addAttribute("information", information)
+        } catch (e: Exception) {
+            val information = e.message.toString()
+            model.addAttribute("information", information)
+        }
+        model.addAttribute("room", newRoom)
+        return ModelAndView("admin/editRoom", model)
     }
 
-    @DeleteMapping("/admin/room/{room}")
-    fun deleteRoom(@PathVariable room: Room): Map<String, Boolean> {
-        roomRepository.delete(room)
-        return mapOf("success" to true)
+    @RequestMapping("/admin/room/create")
+    fun createRoom(
+        @ModelAttribute @Valid roomDto: RoomDto?,
+        request: HttpServletRequest,
+        model: ModelMap
+    ): ModelAndView {
+        try {
+            if (request.method == "POST" && roomDto != null) {
+                roomService.createRoom(roomDto)
+                val information = "success"
+                model.addAttribute("information", information)
+                val room = roomRepository.findByRoomNumber(roomDto.roomNumber!!)
+                model.addAttribute("room", room)
+                return ModelAndView("admin/editRoom", model)
+            }
+        } catch (e: IllegalArgumentException) {
+            val information = e.message.toString()
+            model.addAttribute("information", information)
+        } catch (e: Exception) {
+            val information = e.message.toString()
+            model.addAttribute("information", information)
+        }
+        return ModelAndView("admin/createRoom", model)
+    }
+
+    @PostMapping("/admin/room/delete/{room}")
+    fun deleteRoom(
+        @PathVariable room: Room,
+        request: HttpServletRequest,
+        model: ModelMap
+    ): ModelAndView {
+        try {
+            roomRepository.delete(room)
+            val information = "success"
+            model.addAttribute("information", information)
+        } catch (e: IllegalArgumentException) {
+            val information = e.message.toString()
+            model.addAttribute("information", information)
+        } catch (e: Exception) {
+            val information = e.message.toString()
+            model.addAttribute("information", information)
+        }
+        val rooms = roomRepository.findAll()
+        model.addAttribute("rooms", rooms)
+        return ModelAndView("admin/listRooms", model)
     }
 }

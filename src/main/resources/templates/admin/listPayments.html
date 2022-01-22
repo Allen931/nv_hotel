@@ -7,8 +7,23 @@
 
 <div layout:fragment="content">
     <div class="container-fluid">
-        <h1 class="h3 mb-4 text-gray-800">Reservations</h1>
+        <h1 class="h3 mb-4 text-gray-800">Payments</h1>
         <div th:if="${information}" class="alert-info info-border" role="alert" th:text="${information}"></div>
+        <form class="form-inline" role="search" action="/admin/payment" method="get">
+            <div class="form-group">
+                <label for="reservation">reservation ID</label>
+                <input id="reservation" name="reservation" class="form-control mr-sm-2" type="text" placeholder="Reservation" th:value="${#request.getParameter('reservation')}">
+            </div>
+            <div class="form-group">
+                <select class="form-control" name="paymentStatusType">
+                    <option value="">Payment Status Type</option>
+                    <option value="Pending" th:selected="${#request.getParameter('paymentStatusType') eq 'Pending'}">Pending</option>
+                    <option value="Paid" th:selected="${#request.getParameter('paymentStatusType') eq 'Paid'}">Paid</option>
+                    <option value="Refunded" th:selected="${#request.getParameter('paymentStatusType') eq 'Refunded'}">Refunded</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
         <div class="m-4">
             <table class="table">
                 <thead>

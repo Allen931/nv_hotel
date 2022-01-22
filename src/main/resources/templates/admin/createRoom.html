@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="admin/template">
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Create Room</h1>
+        <div th:if="${information}" class="alert-info" role="alert" th:text="${information}"></div>
+        <form class="form-inline" id="edit" th:action="@{/admin/room/create}" method="post" autocomplete="off">
+            <div class="form-group">
+                <label for="room">Room Number</label>
+                <input id="room" name="roomNumber" class="form-control mr-sm-2" type="text" placeholder="Room Number">
+            </div>
+            <div class="form-group">
+                <select class="form-control" name="roomType">
+                    <option value="">Room Type</option>
+                    <option value="Economy">Economy</option>
+                    <option value="Business">Business</option>
+                    <option value="Luxury">Luxury</option>
+                    <option value="Suite">Suite</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+</div>
+</html>

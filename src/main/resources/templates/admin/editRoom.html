@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="admin/template">
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Room Detail</h1>
+        <div th:if="${information}" class="alert-info" role="alert" th:text="${information}"></div>
+        <form class="form-inline" id="edit" th:action="@{/admin/room/} + ${room.roomNumber}" method="post" autocomplete="off">
+            <div class="form-group">
+                <label for="room">Room Number</label>
+                <input id="room" name="roomNumber" class="form-control mr-sm-2" type="text" placeholder="Room Number" th:value="${room.roomNumber}">
+            </div>
+            <div class="form-group">
+                <select class="form-control" name="roomType">
+                    <option value="">Room Type</option>
+                    <option value="Economy" th:selected="${room.type.toString() eq 'Economy'}">Economy</option>
+                    <option value="Business" th:selected="${room.type.toString() eq 'Business'}">Business</option>
+                    <option value="Luxury" th:selected="${room.type.toString() eq 'Luxury'}">Luxury</option>
+                    <option value="Suite" th:selected="${room.type.toString() eq 'Suite'}">Suite</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </form>
+        <div class="m-4">
+            <h1 class="h3 mb-4 text-gray-800">Reservations of This Room</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Check In Time</th>
+                    <th>Check Out Time</th>
+                    <th>Cost</th>
+                    <th>Room Type</th>
+                    <th>Room</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="reservation : ${room.reservations}">
+                    <td> <span th:text="${reservation.id}"></span> </td>
+                    <td> <span th:text="${reservation.user.name}"></span> </td>
+                    <td> <span th:text="${#dates.format(reservation.checkInTime, 'YYYY/MM/dd')}"></span> </td>
+                    <td> <span th:text="${#dates.format(reservation.checkOutTime, 'YYYY/MM/dd')}"></span> </td>
+                    <td> <span th:text="${reservation.cost}"></span> </td>
+                    <td> <span th:text="${reservation.room.type}"></span> </td>
+                    <td> <span th:text="${reservation.room.roomNumber}"></span> </td>
+                    <td> <span th:text="${reservation.status}"></span> </td>
+                    <td>
+                        <button class="btn btn-success btn-circle btn-sm" th:attr="onclick=|$('#checkInForm' + ${reservation.id})[0].submit()|">
+                            In
+                        </button>
+                        <button class="btn btn-warning btn-circle btn-sm" th:attr="onclick=|$('#checkOutForm' + ${reservation.id})[0].submit()|">
+                            Out
+                        </button>
+                        <a class="btn btn-info btn-circle btn-sm" th:href="@{/admin/reservation/} + ${reservation.id}">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                        <a class="btn btn-danger btn-circle btn-sm" th:href="@{/admin/payment/} + ${reservation.id}">
+                            P
+                        </a>
+                        <form name="checkInForm" method="POST" th:action="@{/admin/reservation/checkIn/} + ${reservation.id}" th:id="checkInForm + ${reservation.id}"></form>
+                        <form name="checkOutForm" method="POST" th:action="@{/admin/reservation/checkOut/} + ${reservation.id}" th:id="checkOutForm + ${reservation.id}"></form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</html>

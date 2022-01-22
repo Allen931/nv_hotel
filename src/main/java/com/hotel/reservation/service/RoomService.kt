@@ -5,6 +5,7 @@ import com.hotel.reservation.entity.Reservation
 import com.hotel.reservation.entity.Room
 import com.hotel.reservation.repository.ReservationRepository
 import com.hotel.reservation.repository.RoomRepository
+import com.hotel.reservation.type.ReservationStatusType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -41,7 +42,9 @@ class RoomService {
         if (tempRoom != null && tempRoom.roomNumber != room.roomNumber) {
             throw IllegalArgumentException("Illegal room number")
         }
-        if (room.reservations.isNotEmpty()) {
+        val reservations = room.reservations
+        val status = listOf(ReservationStatusType.Pending, ReservationStatusType.Reserved, ReservationStatusType.CheckedIn)
+        if (reservations.isNotEmpty() && reservations.any { it.status in status }) {
             throw IllegalArgumentException("The room is reserved")
         }
         room.type = roomDto.roomType!!
