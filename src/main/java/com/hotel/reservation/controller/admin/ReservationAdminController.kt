@@ -88,16 +88,21 @@ class ReservationAdminController {
     ): ModelAndView {
         if (reservation == null)
             throw IllegalArgumentException()
-        var information = ""
         try {
-            if (request.method == "POST")
-            reservationService.changeReservation(reservation, reservationAdminDto)
+            if (request.method == "POST") {
+                reservationService.changeReservation(reservation, reservationAdminDto)
+                val information = "success"
+                model.addAttribute("information", information)
+            }
         } catch (e: IllegalArgumentException) {
-            information = e.message.toString()
+            val information = e.message.toString()
+            model.addAttribute("information", information)
         } catch (e: DuplicateReservationException) {
-            information = "Assigned room is not available"
+            val information = "Assigned room is not available"
+            model.addAttribute("information", information)
         }
-        model.addAttribute("reservation", reservation)
-        return ModelAndView("admin/changeReservation", model)
+
+        model.addAttribute("reservation", reservationRepository.findById(reservation.id!!).get())
+        return ModelAndView("admin/editReservation", model)
     }
 }

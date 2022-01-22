@@ -16,12 +16,12 @@
                 <input name="id" class="form-control mr-sm-2" type="text" placeholder="ID" th:value="${#request.getParameter('id')}">
             </div>
             <div class="form-group">
-                <select class="form-control" id="type" th:value="${#request.getParameter('type')}">
-                    <option></option>
-                    <option>Economy</option>
-                    <option>Business</option>
-                    <option>Luxury</option>
-                    <option>Suite</option>
+                <select class="form-control" name="type">
+                    <option value=""></option>
+                    <option value="Economy" th:selected="${#request.getParameter('type') eq 'Economy'}">Economy</option>
+                    <option value="Business" th:selected="${#request.getParameter('type') eq 'Business'}">Business</option>
+                    <option value="Luxury" th:selected="${#request.getParameter('type') eq 'Luxury'}">Luxury</option>
+                    <option value="Suite" th:selected="${#request.getParameter('type') eq 'Suite'}">Suite</option>
                 </select>
             </div>
             <div class="form-group">
@@ -41,28 +41,28 @@
                 </div>
             </div>
             <div class="form-group">
-                <select class="form-control" id="status">
+                <select class="form-control" name="status">
                     <option></option>
-                    <option>Pending</option>
-                    <option>Reserved</option>
-                    <option>CheckedIn</option>
-                    <option>CheckedOut</option>
-                    <option>Cancelled</option>
+                    <option value="Pending" th:selected="${#request.getParameter('status') eq 'Pending'}">Pending</option>
+                    <option value="Reserved" th:selected="${#request.getParameter('status') eq 'Reserved'}">Reserved</option>
+                    <option value="CheckedIn" th:selected="${#request.getParameter('status') eq 'CheckedIn'}">CheckedIn</option>
+                    <option value="CheckedOut" th:selected="${#request.getParameter('status') eq 'CheckedOut'}">CheckedOut</option>
+                    <option value="Cancelled" th:selected="${#request.getParameter('status') eq 'Cancelled'}">Cancelled</option>
                 </select>
             </div>
             <div class="form-group">
-                <select class="form-control" id="sortBy">
-                    <option>checkInTime</option>
-                    <option>checkOutTime</option>
-                    <option>id</option>
-                    <option>type</option>
-                    <option>status</option>
+                <select class="form-control" name="sortBy">
+                    <option value="checkInTime" th:selected="${#request.getParameter('sortBy') eq 'checkInTime'}">Check In Time</option>
+                    <option value="checkOutTime" th:selected="${#request.getParameter('sortBy') eq 'checkOutTime'}">Check Out Time</option>
+                    <option value="id" th:selected="${#request.getParameter('sortBy') eq 'id'}">id</option>
+                    <option value="type" th:selected="${#request.getParameter('sortBy') eq 'type'}">type</option>
+                    <option value="status" th:selected="${#request.getParameter('sortBy') eq 'status'}">status</option>
                 </select>
             </div>
             <div class="form-group">
-                <select class="form-control" id="order">
-                    <option>dasc</option>
-                    <option>asc</option>
+                <select class="form-control" name="order">
+                    <option value="dasc" th:selected="${#request.getParameter('order') eq 'dasc'}">dasc</option>
+                    <option value="asc" th:selected="${#request.getParameter('order') eq 'asc'}">asc</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Search</button>

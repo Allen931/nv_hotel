@@ -6,6 +6,73 @@
       layout:decorate="admin/template">
 
 <div layout:fragment="content">
-
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Reservation Detail</h1>
+        <form th:action="@{/admin/reservation/} + ${reservation.id}" method="post" autocomplete="off">
+            <div class="form-group">
+                <label for="username">Customer Name</label>
+                <input id="username" name="username" class="form-control mr-sm-2" type="text" placeholder="Username" th:value="${reservation.user.name}">
+            </div>
+            <div class="form-group">
+                <label for="id">ID</label>
+                <input id="id" name="id" class="form-control mr-sm-2" type="text" placeholder="ID" th:value="${reservation.id}" readonly>
+            </div>
+            <div class="form-group">
+                <th:block>
+                    <label for="type">Room Type</label>
+                    <select class="form-control" id="type" name="type" th:value="${reservation.room.type}">
+                        <option value=""></option>
+                        <option value="Economy" th:selected="${reservation.room.type.toString() eq 'Economy'}">Economy</option>
+                        <option value="Business" th:selected="${reservation.room.type.toString() eq 'Business'}">Business</option>
+                        <option value="Luxury" th:selected="${reservation.room.type.toString() eq 'Luxury'}">Luxury</option>
+                        <option value="Suite" th:selected="${reservation.room.type.toString() eq 'Suite'}">Suite</option>
+                    </select>
+                </th:block>
+            </div>
+            <div class="form-group">
+                <label for="room">Room Number</label>
+                <input id="room" name="room" class="form-control mr-sm-2" type="text" placeholder="Room Number" th:value="${reservation.room.roomNumber}">
+            </div>
+            <div class="form-group">
+                <label for="checkInTime">Check In Time</label>
+                <div class="input-group date" id="datetimepicker1">
+                    <input id="checkInTime" type="text" name="checkInTime" class="form-control" placeholder="Check-In Time">
+                    <span class="input-group-addon">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="checkOutTime">Check Out Time</label>
+                <div class="input-group date" id="datetimepicker2">
+                    <input id="checkOutTime" type="text" name="checkOutTime" class="form-control" placeholder="Check-Out Time">
+                    <span class="input-group-addon">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option></option>
+                    <option value="Pending" th:selected="${reservation.status.toString() eq 'Pending'}">Pending</option>
+                    <option value="Reserved" th:selected="${reservation.status.toString() eq 'Reserved'}">Reserved</option>
+                    <option value="CheckedIn" th:selected="${reservation.status.toString() eq 'CheckedIn'}">CheckedIn</option>
+                    <option value="CheckedOut" th:selected="${reservation.status.toString() eq 'CheckedOut'}">CheckedOut</option>
+                    <option value="Cancelled" th:selected="${reservation.status.toString() eq 'Cancelled'}">Cancelled</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="username">Cost</label>
+                <input id="cost" name="cost" class="form-control mr-sm-2" type="text" placeholder="Cost" th:value="${reservation.cost}">
+            </div>
+            <div class="form-group">
+                <label for="otherCharges">Other Charges</label>
+                <input id="otherCharges" name="otherCharges" class="form-control mr-sm-2" type="text" placeholder="Other Charges" th:value="${reservation.otherCharges}">
+            </div>
+            <button type="submit" class="btn btn-primary">Edit</button>
+            <div th:if="${information}" class="alert info-border" role="alert" th:text="${information}"></div>
+        </form>
+    </div>
 </div>
 </html>
