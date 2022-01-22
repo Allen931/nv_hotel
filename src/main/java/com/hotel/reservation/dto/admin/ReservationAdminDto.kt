@@ -32,6 +32,6 @@ class ReservationAdminDto(
     val cost: Int?,
 
     @field:NotNull
-    @field:Min(value = 1)
+    @field:Min(value = 0)
     var otherCharges: Int?,
 ) : ReservationDto(room, checkInTime, checkOutTime) {}
