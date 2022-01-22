@@ -27,15 +27,17 @@
                         <input type="text" name="roomType" class="single-input" id="roomType" disabled th:value="${reservation.room.type.toString()}">
                     </div>
 
-                    <div th:height="72" class="form-group row mt-10 default-select" th:if="${user.loyalty == T(com.hotel.reservation.type.UserLoyaltyType).Ambassador}">
+                    <div th:height="72" class="form-group row mt-10 default-select" th:if="${user.loyalty >= T(com.hotel.reservation.type.UserLoyaltyType).Platinum}">
                         <label for="room"> Room Number</label>
                         <select name="room" id="room" class="form-select" aria-label="Default select example">
                             <option selected th:text="${reservation.room.roomNumber}"></option>
-                            <tr th:each="room : ${rooms}">
+                            <th:block th:each="room : ${rooms}">
                                 <option th:value="${room.roomNumber}" th:text="${room.roomNumber}"></option>
-                            </tr>
+                            </th:block>
                         </select>
                     </div>
+
+                    <input name="room" th:value="${reservation.room.roomNumber}" type="hidden" th:if="${user.loyalty < T(com.hotel.reservation.type.UserLoyaltyType).Platinum}" />
 
                     <div class="form-group row mt-10">
                         <label for="checkInTime">Check In Time</label>
@@ -54,9 +56,8 @@
                             Your current loyalty status allows you to check in after 12PM and check out before 4PM.
                         </p>
                     </div>
-                    <p th:text="${user.loyalty.toString()}"></p>
                     <div class="form-group row mt-10">
-                        <button type="submit" class="genric-btn info">Make Reservation</button>
+                        <button type="submit" class="genric-btn info">Change Reservation</button>
                     </div>
                 </form>
             </div>
