@@ -62,7 +62,7 @@ class ReservationController {
         return "roomAvailability"
     }
 
-    @GetMapping("/reservation/roomAvailabilityQuery")
+    @RequestMapping("/reservation/roomAvailabilityQuery")
     @ResponseBody
     fun roomAvailabilityQuery(
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") checkInTime: Date?,
@@ -163,7 +163,7 @@ class ReservationController {
             reservation.room.type, reservation.checkInTime, reservation.checkOutTime))
         model.addAttribute("user", securityContext.currentUser!!)
 
-        return "changeReservation.jsp"
+        return "changeReservation"
     }
 
     @GetMapping("/reservation/{reservation}/cancel")

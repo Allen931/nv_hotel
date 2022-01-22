@@ -26,18 +26,14 @@
 
                 <script type="text/javascript">
                     function roomAvailability() {
-                        let RoomDto = $('roomForm')
+                        let reservation = $('reservationForm')
                         $.ajax({
                             type: 'POST',
-                            url: '/reservation/roomAvailability',
-                            data: {
-                                roomType: RoomDto.roomType,
-                                checkInTime: RoomDto.checkInTime,
-                                checkOutTime: RoomDto.checkOutTime
-                            },
+                            url: '/reservation/roomAvailabilityQuery',
+                            data: JSON.stringify(reservation),
                             contentType: "application/json",
                             success: function(data) {
-                                alert("test");
+                                alert(data)
                             },
                             error: function(request, status, error) {
                                 alert("Error : " + error + "\nStatus : " + status + "\nRequest : " + request);
@@ -83,6 +79,7 @@
                     </div>
                     <div class="form-group row mt-10">
                         <button type="submit" class="genric-btn info">Change Reservation</button>
+                        <button type="button" value="check" onclick="roomAvailability();" />
                     </div>
                 </form>
             </div>
