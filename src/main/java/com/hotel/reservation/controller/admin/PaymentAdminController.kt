@@ -8,11 +8,13 @@ import com.hotel.reservation.service.PaymentService
 import com.hotel.reservation.type.PaymentStatusType
 import com.hotel.reservation.type.RoomType
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.annotation.Secured
 import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 
 @RestController
+@Secured("ROLE_ADMIN")
 class PaymentAdminController {
     @Autowired private lateinit var paymentRepository: PaymentRepository
     @Autowired private lateinit var paymentService: PaymentService
@@ -28,21 +30,4 @@ class PaymentAdminController {
         paymentService.refundPayment(payment)
         return mapOf("success" to true)
     }
-
-    @GetMapping("/admin/payment")
-    fun listPayments(
-        @RequestParam paymentStatusType: PaymentStatusType?,
-        @RequestParam reservation: Reservation?,
-        model: ModelMap
-    ): ModelAndView {
-        val payments = paymentRepository.findAllByStatusAndReservation(paymentStatusType, reservation)
-        model.addAttribute("payments", payments)
-        return ModelAndView("admin/listPayments")
-    }
-
-    @GetMapping("/admin/payment/{payment}")
-    fun showPayment(
-        @ModelAttribute @PathVariable payment: Payment,
-        model: ModelMap
-    ): ModelAndView = ModelAndView("admin/showPayment", model)
 }

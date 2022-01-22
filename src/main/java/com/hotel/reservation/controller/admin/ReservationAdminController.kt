@@ -12,16 +12,38 @@ import org.springframework.data.domain.Sort
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.security.access.annotation.Secured
 import org.springframework.ui.Model
+import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import java.util.*
+import javax.servlet.http.HttpServletRequest
 
 @RestController
-@Secured
+@Secured("ROLE_ADMIN")
 class ReservationAdminController {
     @Autowired private lateinit var reservationRepository: ReservationRepository
 
     @Autowired private lateinit var reservationService: ReservationService
+
+    @PostMapping("/admin/reservation/checkIn/{reservation}")
+    fun checkIn(@PathVariable reservation: Reservation): Map<String, Boolean> {
+        if (reservation.status != ReservationStatusType.Reserved) {
+            throw IllegalArgumentException("Reservation status should be reserved")
+        }
+        reservation.status = ReservationStatusType.CheckedIn
+        reservationRepository.save(reservation)
+        return mapOf("success" to true)
+    }
+
+    @PostMapping("/admin/reservation/checkOut/{reservation}")
+    fun checkOut(@PathVariable reservation: Reservation): Map<String, Boolean> {
+        if (reservation.status != ReservationStatusType.CheckedIn) {
+            throw IllegalArgumentException("Reservation status should be checked in")
+        }
+        reservation.status = ReservationStatusType.CheckedOut
+        reservationRepository.save(reservation)
+        return mapOf("success" to true)
+    }
 
     @GetMapping("/admin/reservation")
     fun listReservations(
@@ -33,7 +55,7 @@ class ReservationAdminController {
         @RequestParam status: ReservationStatusType? = null,
         @RequestParam sortBy: String? = null,
         @RequestParam order: String? = null,
-        model: Model
+        model: ModelMap
     ): ModelAndView {
         var sort: Sort = when (sortBy) {
             "id" -> Sort.by("id")
@@ -52,26 +74,29 @@ class ReservationAdminController {
             username, id, type, checkInTime, checkOutTime, status, sort
         )
 
-        val model = ModelAndView("admin/listReservations")
-        model.addObject(reservations)
+        model.addAttribute("reservations", reservations)
 
-        return model
+        return ModelAndView("admin/listReservations", model)
     }
 
-    @PostMapping("/admin/reservation/{reservation}")
+    @RequestMapping("/admin/reservation/{reservation}")
     fun editReservation(
         @PathVariable reservation: Reservation?,
-        @ModelAttribute("reservationAdminDto") reservationAdminDto: ReservationAdminDto
-    ): Map<String, Any> {
+        @ModelAttribute("reservationAdminDto") reservationAdminDto: ReservationAdminDto,
+        request: HttpServletRequest,
+        model: ModelMap
+    ): ModelAndView {
         if (reservation == null)
             throw IllegalArgumentException()
+        var information = ""
         try {
+            if (request.method == "POST")
             reservationService.changeReservation(reservation, reservationAdminDto)
-            return mapOf("success" to true)
         } catch (e: IllegalArgumentException) {
-            return mapOf("success" to false, "information" to e.message.toString())
+            information = e.message.toString()
         } catch (e: DuplicateReservationException) {
-            return mapOf("success" to false, "information" to "Assigned room is not available")
+            information = "Assigned room is not available"
         }
+        model.addAttribute("reservation", reservation)
     }
 }

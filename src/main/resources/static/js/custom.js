@@ -61,7 +61,6 @@
     
     $('select').niceSelect();
     $('.date').datetimepicker({
-        daysOfWeekDisabled: [0, 6],
         format: 'yyyy-mm-dd',
         startView: 'month',
         minView: 'month',
@@ -69,7 +68,6 @@
     });
 
     $('.date-time').datetimepicker({
-        daysOfWeekDisabled: [0, 6],
         format: 'yyyy-mm-dd hh:ii',
         startView: 'day',
         minView: 'hour',

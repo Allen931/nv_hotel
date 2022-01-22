@@ -10,6 +10,9 @@ import java.util.Date
 
 @Repository
 interface RoomRepository : CrudRepository<Room, Int> {
+    fun findByRoomNumber(roomNumber: Int): Room?
+    fun findByType(roomType: RoomType): List<Room>
+
     @Query("""SELECT r2 FROM Room r2 
                 WHERE (:type is null OR r2.type = :type) 
                 AND NOT EXISTS 
@@ -24,7 +27,4 @@ interface RoomRepository : CrudRepository<Room, Int> {
         @Param("checkInTime") checkInTime: Date,
         @Param("checkOutTime") checkOutTime: Date
     ): List<Room>
-
-    fun findByRoomNumber(roomNumber: Int): Room?
-    fun findByType(roomType: RoomType): List<Room>
 }

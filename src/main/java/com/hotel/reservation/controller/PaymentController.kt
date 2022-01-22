@@ -5,6 +5,7 @@ import com.hotel.reservation.entity.Reservation
 import com.hotel.reservation.exception.PaymentFailedException
 import com.hotel.reservation.service.PaymentService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.ModelMap
@@ -17,6 +18,7 @@ class PaymentController {
     @Autowired private lateinit var paymentService: PaymentService
 
     @GetMapping("/payment/create/{reservation}")
+    @Secured("ROLE_USER")
     fun createPayment(
         @PathVariable reservation: Reservation,
         @RequestParam amount: Int,
@@ -29,6 +31,7 @@ class PaymentController {
     }
 
     @RequestMapping("/payment/{payment}/pay")
+    @Secured("ROLE_USER")
     fun pay(
         @ModelAttribute @PathVariable payment: Payment,
         @RequestParam creditCardNumber: String?,

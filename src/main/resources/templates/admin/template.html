@@ -120,15 +120,10 @@
                             </th:block>
                             <div class="dropdown-divider"></div>
                             <th:block sec:authorize="isAuthenticated()">
-                                <b class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
-                                </b>
-                            </th:block>
-
-                            <th:block sec:authorize="isAnonymous()">
-                                <b class="dropdown-item"><a class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"
-                                                            th:href="@{/login}">Login</a></b>
+                                </a>
                             </th:block>
                         </div>
                     </li>
@@ -186,7 +181,9 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" th:href="@{/logout}">Logout</a>
+<!--                    <a class="btn btn-primary" th:href="@{/logout}">Logout</a>-->
+                    <button class="btn btn-primary" type="button" onclick="$('#logoutForm')[0].submit(); location.href = '/'">Logout</button>
+                    <form method="POST" th:action="@{/logout}" id="logoutForm"></form>
                 </div>
             </div>
         </div>

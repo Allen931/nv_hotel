@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.ModelMap
@@ -66,7 +67,7 @@ class ReservationController {
     }
 
     @RequestMapping("/reservation/reserve/{roomType}")
-    @Secured
+    @Secured("ROLE_USER")
     fun reserveRoom(
         @ModelAttribute @PathVariable roomType: RoomType,
         @ModelAttribute("reservation") reservationDto: ReservationDto,
@@ -95,14 +96,14 @@ class ReservationController {
     }
 
     @GetMapping("/reservation")
-    @Secured
+    @Secured("ROLE_USER")
     fun listReservations(model: Model): String {
         model.addAttribute("reservations", securityContext.currentUser!!.reservations)
         return "listReservations"
     }
 
     @GetMapping("/reservation/{reservation}")
-    @Secured
+    @Secured("ROLE_USER")
     fun showReservation(@PathVariable @ModelAttribute reservation: Reservation): String {
         if (reservation.user.id != securityContext.currentUser!!.id) {
             throw AccessDeniedException("Not your reservation!")
@@ -112,7 +113,7 @@ class ReservationController {
     }
 
     @RequestMapping("/reservation/{reservation}/change")
-    @Secured
+    @Secured("ROLE_USER")
     fun changeReservation(
         @PathVariable reservation: Reservation,
         @ModelAttribute reservationDto: ReservationDto,
@@ -147,7 +148,7 @@ class ReservationController {
     }
 
     @GetMapping("/reservation/{reservation}/cancel")
-    @Secured
+    @Secured("ROLE_USER")
     fun cancelReservation(@PathVariable reservation: Reservation, redirectAttributes: RedirectAttributes): String {
         if (reservation.status > ReservationStatusType.Reserved || reservation.user.id != securityContext.currentUser!!.id)
             throw AccessDeniedException("You cannot cancel this reservation")

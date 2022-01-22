@@ -4,18 +4,19 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="admin/template">
+
 <div layout:fragment="content">
     <div class="container-fluid">
-        <h1 class="h3 mb-4 text-gray-800">Reservation</h1>
-        <form class="form-inline" role="search" action="/reservation" method="get" target="_blank">
+        <h1 class="h3 mb-4 text-gray-800">Reservations</h1>
+        <form class="form-inline" role="search" action="/admin/reservation" method="get">
             <div class="form-group">
-                <input name="username" class="form-control mr-sm-2" type="text" placeholder="Username">
+                <input name="username" class="form-control mr-sm-2" type="text" placeholder="Username" th:value="${#request.getParameter('username')}">
             </div>
             <div class="form-group">
-                <input name="id" class="form-control mr-sm-2" type="text" placeholder="User ID">
+                <input name="id" class="form-control mr-sm-2" type="text" placeholder="ID" th:value="${#request.getParameter('id')}">
             </div>
             <div class="form-group">
-                <select class="form-control" id="type">
+                <select class="form-control" id="type" th:value="${#request.getParameter('type')}">
                     <option></option>
                     <option>Economy</option>
                     <option>Business</option>
@@ -24,11 +25,19 @@
                 </select>
             </div>
             <div class="form-group">
-                <div class="input-group date" id="datetimepicker11">
-                    <input type="text" name="checkInTime" class="form-control" placeholder="Arrival Date">
+                <div class="input-group date" id="datetimepicker1">
+                    <input type="text" name="checkInTime" class="form-control" placeholder="Check-In Date">
                     <span class="input-group-addon">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
-                            </span>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group date" id="datetimepicker2">
+                    <input type="text" name="checkInTime" class="form-control" placeholder="Check-Out Date">
+                    <span class="input-group-addon">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                    </span>
                 </div>
             </div>
             <div class="form-group">
@@ -41,7 +50,63 @@
                     <option>Cancelled</option>
                 </select>
             </div>
+            <div class="form-group">
+                <select class="form-control" id="sortBy">
+                    <option>checkInTime</option>
+                    <option>checkOutTime</option>
+                    <option>id</option>
+                    <option>type</option>
+                    <option>status</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select class="form-control" id="order">
+                    <option>dasc</option>
+                    <option>asc</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
         </form>
+        <div class="m-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Check In Time</th>
+                    <th>Check Out Time</th>
+                    <th>Cost</th>
+                    <th>Room Type</th>
+                    <th>Room</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="reservation : ${reservations}">
+                        <td> <span th:text="${reservation.id}"></span> </td>
+                        <td> <span th:text="${reservation.user.name}"></span> </td>
+                        <td> <span th:text="${#dates.format(reservation.checkInTime, 'YYYY/MM/dd')}"></span> </td>
+                        <td> <span th:text="${#dates.format(reservation.checkOutTime, 'YYYY/MM/dd')}"></span> </td>
+                        <td> <span th:text="${reservation.cost}"></span> </td>
+                        <td> <span th:text="${reservation.room.type}"></span> </td>
+                        <td> <span th:text="${reservation.room.roomNumber}"></span> </td>
+                        <td> <span th:text="${reservation.status}"></span> </td>
+                        <td>
+<!--                            <button class="btn btn-success btn-circle btn-sm" type="button" onclick="$('#checkInForm')[0].submit()">-->
+<!--                                In-->
+<!--                            </button>-->
+<!--                            <a class="btn btn-primary btn-circle btn-sm" type="button" onclick="$('#checkOutForm')[0].submit()">-->
+<!--                                Out-->
+<!--                            </a>-->
+                            <a href="#" class="btn btn-info btn-circle btn-sm" th:href="@{/admin/reservation/} + ${reservation.id}">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 </html>

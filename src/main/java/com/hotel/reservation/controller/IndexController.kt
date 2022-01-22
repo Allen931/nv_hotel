@@ -24,8 +24,7 @@ class IndexController {
 
     @GetMapping("/login")
     fun login(): String {
-        if (securityContext.currentUser != null)
-            return "redirect:/reservation"
+        if (securityContext.currentUser != null) return "redirect:/reservation"
 
         return "login"
     }
@@ -36,6 +35,8 @@ class IndexController {
         model: Model,
         request: HttpServletRequest
     ): String {
+        if (securityContext.currentUser != null) return "redirect:/reservation"
+
         if (request.method == "POST") {
             try {
                 val user = userService.register(userDto)

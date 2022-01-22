@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 @RestController
-@Secured
+@Secured("ROLE_ADMIN")
 class RoomAdminController {
     @Autowired
     private lateinit var roomRepository: RoomRepository
@@ -30,12 +30,6 @@ class RoomAdminController {
         model.addAttribute("rooms", rooms)
         return ModelAndView("admin/listRooms")
     }
-
-    @GetMapping("/admin/room/{room}")
-    fun showRoom(
-        @ModelAttribute @PathVariable room: Room,
-        model: ModelMap
-    ): ModelAndView = ModelAndView("admin/showRoom", model)
 
     @PostMapping("/admin/room")
     fun createRoom(@ModelAttribute @Valid roomDto: RoomDto): Map<String, Boolean> {
