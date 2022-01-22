@@ -19,4 +19,6 @@ interface PaymentRepository : CrudRepository<Payment, Int> {
         @Param("status") status: PaymentStatusType?,
         @Param("reservation") reservation: Reservation?
     ): List<Payment>
+
+    fun findAllByReservation(reservation: Reservation): List<Payment>
 }

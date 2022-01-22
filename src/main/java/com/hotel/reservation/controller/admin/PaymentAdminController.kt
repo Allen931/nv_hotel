@@ -20,14 +20,49 @@ class PaymentAdminController {
     @Autowired private lateinit var paymentService: PaymentService
 
     @PostMapping("/admin/payment/{payment}/setPaid")
-    fun setPaid(@PathVariable payment: Payment): Map<String, Boolean> {
-        paymentService.processPayment(payment, null)
-        return mapOf("success" to true)
+    fun setPaid(
+        @PathVariable payment: Payment,
+        model: ModelMap
+    ): ModelAndView {
+        val reservation = payment.reservation
+        val status = payment.status
+        val payments = paymentRepository.findAllByStatusAndReservation(status, reservation)
+        try {
+            paymentService.processPayment(payment, null)
+            model.addAttribute("information", "Pay Successfully")
+        } catch (e: IllegalArgumentException) {
+            model.addAttribute("information", e.message.toString())
+        }
+        model.addAttribute("payments", payments)
+        return ModelAndView("admin/listPayments", model)
     }
 
     @PostMapping("/admin/payment/{payment}/refund")
-    fun refund(@PathVariable payment: Payment): Map<String, Boolean> {
-        paymentService.refundPayment(payment)
-        return mapOf("success" to true)
+    fun refund(
+        @PathVariable payment: Payment,
+        model: ModelMap
+    ): ModelAndView {
+        val reservation = payment.reservation
+        val status = payment.status
+        val payments = paymentRepository.findAllByStatusAndReservation(status, reservation)
+        try {
+            paymentService.refundPayment(payment)
+            model.addAttribute("information", "Pay Successfully")
+        } catch (e: IllegalArgumentException) {
+            model.addAttribute("information", e.message.toString())
+        }
+        model.addAttribute("payments", payments)
+        return ModelAndView("admin/listPayments", model)
+    }
+
+    @GetMapping("/admin/payment/{reservation}")
+    fun listPayments(
+        @RequestParam paymentStatusType: PaymentStatusType?,
+        @PathVariable reservation: Reservation?,
+        model: ModelMap
+    ): ModelAndView {
+        val payments = paymentRepository.findAllByStatusAndReservation(paymentStatusType, reservation)
+        model.addAttribute("payments", payments)
+        return ModelAndView("admin/listPayments")
     }
 }

@@ -8,6 +8,7 @@
 <div layout:fragment="content">
     <div class="container-fluid">
         <h1 class="h3 mb-4 text-gray-800">Reservations</h1>
+        <div th:if="${information}" class="alert-info info-border" role="alert" th:text="${information}"></div>
         <form class="form-inline" role="search" action="/admin/reservation" method="get">
             <div class="form-group">
                 <input name="username" class="form-control mr-sm-2" type="text" placeholder="Username" th:value="${#request.getParameter('username')}">
@@ -17,7 +18,7 @@
             </div>
             <div class="form-group">
                 <select class="form-control" name="type">
-                    <option value=""></option>
+                    <option value="">Room Type</option>
                     <option value="Economy" th:selected="${#request.getParameter('type') eq 'Economy'}">Economy</option>
                     <option value="Business" th:selected="${#request.getParameter('type') eq 'Business'}">Business</option>
                     <option value="Luxury" th:selected="${#request.getParameter('type') eq 'Luxury'}">Luxury</option>
@@ -42,7 +43,7 @@
             </div>
             <div class="form-group">
                 <select class="form-control" name="status">
-                    <option></option>
+                    <option value="">Status</option>
                     <option value="Pending" th:selected="${#request.getParameter('status') eq 'Pending'}">Pending</option>
                     <option value="Reserved" th:selected="${#request.getParameter('status') eq 'Reserved'}">Reserved</option>
                     <option value="CheckedIn" th:selected="${#request.getParameter('status') eq 'CheckedIn'}">CheckedIn</option>
@@ -93,15 +94,20 @@
                         <td> <span th:text="${reservation.room.roomNumber}"></span> </td>
                         <td> <span th:text="${reservation.status}"></span> </td>
                         <td>
-<!--                            <button class="btn btn-success btn-circle btn-sm" type="button" onclick="$('#checkInForm')[0].submit()">-->
-<!--                                In-->
-<!--                            </button>-->
-<!--                            <a class="btn btn-primary btn-circle btn-sm" type="button" onclick="$('#checkOutForm')[0].submit()">-->
-<!--                                Out-->
-<!--                            </a>-->
-                            <a href="#" class="btn btn-info btn-circle btn-sm" th:href="@{/admin/reservation/} + ${reservation.id}">
+                            <button class="btn btn-success btn-circle btn-sm" th:attr="onclick=|$('#checkInForm' + ${reservation.id})[0].submit()|">
+                                In
+                            </button>
+                            <button class="btn btn-warning btn-circle btn-sm" th:attr="onclick=|$('#checkOutForm' + ${reservation.id})[0].submit()|">
+                                Out
+                            </button>
+                            <a class="btn btn-info btn-circle btn-sm" th:href="@{/admin/reservation/} + ${reservation.id}">
                                 <i class="fas fa-info-circle"></i>
                             </a>
+                            <a class="btn btn-danger btn-circle btn-sm" th:href="@{/admin/payment/} + ${reservation.id}">
+                                P
+                            </a>
+                            <form name="checkInForm" method="POST" th:action="@{/admin/reservation/checkIn/} + ${reservation.id}" th:id="checkInForm + ${reservation.id}"></form>
+                            <form name="checkOutForm" method="POST" th:action="@{/admin/reservation/checkOut/} + ${reservation.id}" th:id="checkOutForm + ${reservation.id}"></form>
                         </td>
                     </tr>
                 </tbody>

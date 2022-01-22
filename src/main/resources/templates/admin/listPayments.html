@@ -1,10 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="admin/template">
 
-</body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800">Reservations</h1>
+        <div th:if="${information}" class="alert-info info-border" role="alert" th:text="${information}"></div>
+        <div class="m-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Reservation</th>
+                    <th>Amount</th>
+                    <th>Payment Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="payment : ${payments}">
+                    <td> <span th:text="${payment.id}"></span> </td>
+                    <td> <span th:text="${payment.reservation.id}"></span> </td>
+                    <td> <span th:text="${payment.amount}"></span> </td>
+                    <td> <span th:text="${#dates.format(payment.paymentTime, 'YYYY/MM/dd')}"></span> </td>
+                    <td> <span th:text="${payment.status}"></span> </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" th:attr="onclick=|$('#payForm' + ${payment.id})[0].submit()|">
+                            Pay
+                        </button>
+                        <button type="button" class="btn btn-warning" th:attr="onclick=|$('#refundForm' + ${payment.id})[0].submit()|">
+                            Refund
+                        </button>
+                    </td>
+                    <form name="payForm" method="POST" th:action="@{/admin/payment/} + ${payment.id} + @{/setPaid}" th:id="payForm + ${payment.id}"></form>
+                    <form name="refundForm" method="POST" th:action="@{/admin/payment/} + ${payment.id} + @{/refund}" th:id="refundForm + ${payment.id}"></form>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 </html>

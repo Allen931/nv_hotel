@@ -8,7 +8,8 @@
 <div layout:fragment="content">
     <div class="container-fluid">
         <h1 class="h3 mb-4 text-gray-800">Reservation Detail</h1>
-        <form th:action="@{/admin/reservation/} + ${reservation.id}" method="post" autocomplete="off">
+        <div th:if="${information}" class="alert-info" role="alert" th:text="${information}"></div>
+        <form id="edit" th:action="@{/admin/reservation/} + ${reservation.id}" method="post" autocomplete="off">
             <div class="form-group">
                 <label for="username">Customer Name</label>
                 <input id="username" name="username" class="form-control mr-sm-2" type="text" placeholder="Username" th:value="${reservation.user.name}">
@@ -70,9 +71,15 @@
                 <label for="otherCharges">Other Charges</label>
                 <input id="otherCharges" name="otherCharges" class="form-control mr-sm-2" type="text" placeholder="Other Charges" th:value="${reservation.otherCharges}">
             </div>
-            <button type="submit" class="btn btn-primary">Edit</button>
-            <div th:if="${information}" class="alert info-border" role="alert" th:text="${information}"></div>
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="submit" class="btn btn-primary">Edit</button>
+                <button type="reset" class="btn btn-primary">Reset</button>
+                <button th:if="${reservation.status.toString() eq 'Reserved'}" id="checkIn" type="button" class="btn btn-primary" onclick="$('#checkInForm')[0].submit()">Check In</button>
+                <button th:if="${reservation.status.toString() eq 'CheckedIn'}" id="checkOut" type="button" class="btn btn-primary" onclick="$('#checkOutForm')[0].submit()">Check Out</button>
+            </div>
         </form>
+        <form name="checkInForm" th:if="${reservation.status.toString() eq 'Reserved'}" method="POST" th:action="@{/admin/reservation/checkIn/} + ${reservation.id}" id="checkInForm" type="hidden"></form>
+        <form name="checkOutForm" th:if="${reservation.status.toString() eq 'CheckedIn'}" method="POST" th:action="@{/admin/reservation/checkOut/} + ${reservation.id}" id="checkOutForm" type=""hidden></form>
     </div>
 </div>
 </html>

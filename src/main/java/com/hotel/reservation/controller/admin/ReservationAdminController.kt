@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.security.access.annotation.Secured
-import org.springframework.ui.Model
 import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
@@ -26,23 +25,37 @@ class ReservationAdminController {
     @Autowired private lateinit var reservationService: ReservationService
 
     @PostMapping("/admin/reservation/checkIn/{reservation}")
-    fun checkIn(@PathVariable reservation: Reservation): Map<String, Boolean> {
+    fun checkIn(
+        @PathVariable reservation: Reservation,
+        model: ModelMap
+    ): ModelAndView {
         if (reservation.status != ReservationStatusType.Reserved) {
-            throw IllegalArgumentException("Reservation status should be reserved")
+            model.addAttribute("reservation", reservation)
+            model.addAttribute("information", "Reservation status should be reserved")
+        } else {
+            reservation.status = ReservationStatusType.CheckedIn
+            reservationRepository.save(reservation)
+            model.addAttribute("reservation", reservation)
+            model.addAttribute("information", "Check In Success")
         }
-        reservation.status = ReservationStatusType.CheckedIn
-        reservationRepository.save(reservation)
-        return mapOf("success" to true)
+        return ModelAndView("admin/editReservation", model)
     }
 
     @PostMapping("/admin/reservation/checkOut/{reservation}")
-    fun checkOut(@PathVariable reservation: Reservation): Map<String, Boolean> {
+    fun checkOut(
+        @PathVariable reservation: Reservation,
+        model: ModelMap
+    ): ModelAndView {
         if (reservation.status != ReservationStatusType.CheckedIn) {
-            throw IllegalArgumentException("Reservation status should be checked in")
+            model.addAttribute("reservation", reservation)
+            model.addAttribute("information", "Reservation status should be checked in")
+        } else {
+            reservation.status = ReservationStatusType.CheckedOut
+            reservationRepository.save(reservation)
+            model.addAttribute("reservation", reservation)
+            model.addAttribute("information", "Check Out Success")
         }
-        reservation.status = ReservationStatusType.CheckedOut
-        reservationRepository.save(reservation)
-        return mapOf("success" to true)
+        return ModelAndView("admin/editReservation", model)
     }
 
     @GetMapping("/admin/reservation")
