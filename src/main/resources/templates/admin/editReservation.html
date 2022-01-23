@@ -11,8 +11,8 @@
         <div th:if="${information}" class="alert-info" role="alert" th:text="${information}"></div>
         <form id="edit" th:action="@{/admin/reservation/} + ${reservation.id}" method="post" autocomplete="off">
             <div class="form-group">
-                <label for="username">Customer Name</label>
-                <input id="username" name="username" class="form-control mr-sm-2" type="text" placeholder="Username" th:value="${reservation.user.name}">
+                <label for="name">Customer Name</label>
+                <input id="name" class="form-control mr-sm-2" type="text" placeholder="name" th:value="${reservation.user.name}" readonly>
             </div>
             <div class="form-group">
                 <label for="id">ID</label>
@@ -36,8 +36,8 @@
             </div>
             <div class="form-group">
                 <label for="checkInTime">Check In Time</label>
-                <div class="input-group date" id="datetimepicker1">
-                    <input id="checkInTime" type="text" name="checkInTime" class="form-control" placeholder="Check-In Time">
+                <div class="input-group date">
+                    <input id="checkInTime" type="text" name="checkInTime" class="form-control" placeholder="Check-In Time" th:value="${#dates.format(reservation.checkInTime, 'yyyy-MM-dd HH:mm')}">
                     <span class="input-group-addon">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
                     </span>
@@ -45,8 +45,8 @@
             </div>
             <div class="form-group">
                 <label for="checkOutTime">Check Out Time</label>
-                <div class="input-group date" id="datetimepicker2">
-                    <input id="checkOutTime" type="text" name="checkOutTime" class="form-control" placeholder="Check-Out Time">
+                <div class="input-group date">
+                    <input id="checkOutTime" type="text" name="checkOutTime" class="form-control" placeholder="Check-Out Time" th:value="${#dates.format(reservation.checkOutTime, 'yyyy-MM-dd HH:mm')}">
                     <span class="input-group-addon">
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
                     </span>
@@ -70,6 +70,10 @@
             <div class="form-group">
                 <label for="otherCharges">Other Charges</label>
                 <input id="otherCharges" name="otherCharges" class="form-control mr-sm-2" type="text" placeholder="Other Charges" th:value="${reservation.otherCharges}">
+            </div>
+            <div class="form-group">
+                <label for="remainingPayment">Remaining Payment</label>
+                <input id="remainingPayment" class="form-control mr-sm-2" type="text" placeholder="Other Charges" th:value="${reservation.remainingAmount}" readonly>
             </div>
             <div class="btn-group" role="group" aria-label="Basic example">
                 <button type="submit" class="btn btn-primary">Edit</button>

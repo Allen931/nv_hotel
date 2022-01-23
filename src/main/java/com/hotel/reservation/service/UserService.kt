@@ -44,13 +44,10 @@ class UserService {
         return user
     }
 
-    @Transactional
     fun editUser(
-        user: User?,
+        user: User,
         @Valid userAdminDto: UserAdminDto
     ) {
-        if (user == null)
-            throw IllegalArgumentException("User does not exist")
         modelMapper.map(userAdminDto, user)
         userRepository.save(user)
     }

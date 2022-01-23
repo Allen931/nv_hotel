@@ -59,14 +59,11 @@ class UserAdminController {
 
     @RequestMapping("/admin/user/{user}")
     fun editUser(
-        @PathVariable user: User?,
+        @PathVariable user: User,
         @ModelAttribute @Valid userAdminDto: UserAdminDto,
         request: HttpServletRequest,
         model: ModelMap
     ): ModelAndView {
-        if (user == null)
-            throw IllegalArgumentException()
-
         var newUser = user
         try {
             if (request.method == "POST") {
@@ -93,8 +90,7 @@ class UserAdminController {
         model: ModelMap
     ): ModelAndView {
         try {
-            user.permission = UserPermissionType.Removed
-            userRepository.save(user)
+            userRepository.delete(user)
             val information = "success"
             model.addAttribute("information", information)
         } catch (e: IllegalArgumentException) {

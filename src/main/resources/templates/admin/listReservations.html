@@ -26,19 +26,13 @@
                 </select>
             </div>
             <div class="form-group">
-                <div class="input-group date" id="datetimepicker1">
-                    <input type="text" name="checkInTime" class="form-control" placeholder="Check-In Date">
-                    <span class="input-group-addon">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                    </span>
+                <div class="input-group date">
+                    <input type="text" name="checkInTime" class="form-control" placeholder="Check-In Date" th:value="${#request.getParameter('checkInTime')}">
                 </div>
             </div>
             <div class="form-group">
-                <div class="input-group date" id="datetimepicker2">
-                    <input type="text" name="checkInTime" class="form-control" placeholder="Check-Out Date">
-                    <span class="input-group-addon">
-                                <i class="fa fa-calendar" aria-hidden="true"></i>
-                    </span>
+                <div class="input-group date">
+                    <input type="text" name="checkInTime" class="form-control" placeholder="Check-Out Date" th:value="${#request.getParameter('checkOutTime')}">
                 </div>
             </div>
             <div class="form-group">

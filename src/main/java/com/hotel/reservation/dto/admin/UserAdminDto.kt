@@ -6,8 +6,7 @@ import javax.validation.constraints.NotBlank
 
 class UserAdminDto(
     val name: String? = null,
-
+    val loginName: String? = null,
     val permission: UserPermissionType? = null,
-
     val loyalty: UserLoyaltyType? = null
 ) {}

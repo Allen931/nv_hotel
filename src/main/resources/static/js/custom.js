@@ -59,7 +59,7 @@
 	parallaxEffect();
     
     
-    $('select').niceSelect();
+    $('select').not('.no-nice-select').niceSelect();
     $('.date').datetimepicker({
         format: 'yyyy-mm-dd',
         startView: 'month',

@@ -32,21 +32,16 @@ class RoomAdminController {
 
     @RequestMapping("/admin/room/{room}")
     fun editRoom(
-        @PathVariable room: Room?,
+        @PathVariable room: Room,
         @ModelAttribute @Valid roomDto: RoomDto,
         request: HttpServletRequest,
         model: ModelMap
     ): ModelAndView {
-        if (room == null)
-            throw IllegalArgumentException()
-
-        var newRoom = room
         try {
             if (request.method == "POST") {
                 roomService.editRoom(room, roomDto)
                 val information = "success"
                 model.addAttribute("information", information)
-                newRoom = roomRepository.findByRoomNumber(roomDto.roomNumber!!)
             }
         } catch (e: IllegalArgumentException) {
             val information = e.message.toString()
@@ -55,7 +50,7 @@ class RoomAdminController {
             val information = e.message.toString()
             model.addAttribute("information", information)
         }
-        model.addAttribute("room", newRoom)
+        model.addAttribute("room", room)
         return ModelAndView("admin/editRoom", model)
     }
 
@@ -67,10 +62,10 @@ class RoomAdminController {
     ): ModelAndView {
         try {
             if (request.method == "POST" && roomDto != null) {
-                roomService.createRoom(roomDto)
+                val room = roomService.createRoom(roomDto)
                 val information = "success"
                 model.addAttribute("information", information)
-                val room = roomRepository.findByRoomNumber(roomDto.roomNumber!!)
+
                 model.addAttribute("room", room)
                 return ModelAndView("admin/editRoom", model)
             }

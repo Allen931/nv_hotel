@@ -62,27 +62,21 @@ class ReservationController {
         return "roomAvailability"
     }
 
-    @RequestMapping("/reservation/roomAvailabilityQuery")
+    @GetMapping("/reservation/roomAvailabilityQuery")
     @ResponseBody
+    @Secured("ROLE_USER")
     fun roomAvailabilityQuery(
-        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") checkInTime: Date?,
-        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") checkOutTime: Date?,
-        @RequestParam type: RoomType?,
-    ): List<Room>? {
-        if (checkInTime != null && checkOutTime != null) {
-            // Set check-in and check-out time to default options
-            checkInTime.hours = 16
-            checkInTime.minutes = 0
-            checkOutTime.hours = 11
-            checkOutTime.minutes = 59
-            try {
-                reservationService.ensureValidCheckInCheckOutTime(securityContext.currentUser, checkInTime, checkOutTime)
-                val rooms = roomRepository.findAvailableRoomsByTypeAndStayTime(type, checkInTime, checkOutTime)
-                return rooms
-            } catch (e: IllegalArgumentException) {
-            }
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") checkInTime: Date,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") checkOutTime: Date,
+        @RequestParam type: RoomType,
+    ): Map<String, Any?> {
+        try {
+            reservationService.ensureValidCheckInCheckOutTime(securityContext.currentUser, checkInTime, checkOutTime)
+            val rooms = roomRepository.findAvailableRoomsByTypeAndStayTime(type, checkInTime, checkOutTime)
+            return mapOf("rooms" to rooms.map { it.roomNumber })
+        } catch (e: IllegalArgumentException) {
+            return mapOf("error" to e.message)
         }
-        return null
     }
 
     @RequestMapping("/reservation/reserve/{roomType}")

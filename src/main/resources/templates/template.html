@@ -44,7 +44,7 @@
                 <ul class="nav navbar-nav menu_nav ml-auto">
                     <th:block sec:authorize="isAuthenticated()">
                         <li class="nav-item"><a class="nav-link" th:href="@{/reservation}" th:text="'Welcome back, ' + ${#authentication.getPrincipal().getUsername()}"></a></li>
-                        <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"><a class="nav-link" th:href="@{/admin}">Admin</a></li>
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')"><a class="nav-link" th:href="@{/admin/reservation}">Admin</a></li>
                         <li class="nav-item"><a class="nav-link" href="#" onclick="$('#logoutForm')[0].submit()">Logout</a></li>
                         <form method="POST" th:action="@{/logout}" id="logoutForm"></form>
                     </th:block>

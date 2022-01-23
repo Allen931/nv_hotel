@@ -57,6 +57,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
+                    <th>Login Name</th>
                     <th>Permission</th>
                     <th>Loyalty</th>
                     <th>Actions</th>
@@ -66,6 +67,7 @@
                 <tr th:each="user : ${users}">
                     <td> <span th:text="${user.id}"></span> </td>
                     <td> <span th:text="${user.name}"></span> </td>
+                    <td> <span th:text="${user.loginName}"></span> </td>
                     <td> <span th:text="${user.permission}"></span> </td>
                     <td> <span th:text="${user.loyalty}"></span> </td>
                     <td>

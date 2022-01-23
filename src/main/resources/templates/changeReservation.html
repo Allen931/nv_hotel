@@ -20,42 +20,10 @@
             <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
             <div class="d-flex justify-content-center">
-
-                <script type="text/javascript"
-                        src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
-
-                <script type="text/javascript">
-                    function roomAvailability() {
-                        let reservation = $('reservationForm')
-                        $.ajax({
-                            type: 'POST',
-                            url: '/reservation/roomAvailabilityQuery',
-                            data: JSON.stringify(reservation),
-                            contentType: "application/json",
-                            success: function(data) {
-                                alert(data)
-                            },
-                            error: function(request, status, error) {
-                                alert("Error : " + error + "\nStatus : " + status + "\nRequest : " + request);
-                            }
-                        });
-                    }
-                </script>
-
                 <form id="roomForm" th:action="@{/reservation/{id}/change(id = ${reservation.id})}" method="POST" autocomplete="off">
                     <div class="form-group row mt-10">
                         <label for="roomType">Room Type</label>
                         <input type="text" name="roomType" class="single-input" id="roomType" disabled th:value="${reservation.room.type.toString()}">
-                    </div>
-
-                    <div th:height="72" class="form-group row mt-10 default-select" th:if="${user.loyalty >= T(com.hotel.reservation.type.UserLoyaltyType).Platinum}">
-                        <label for="room"> Room Number</label>
-                        <select name="room" id="room" class="form-select" aria-label="Default select example">
-                            <option selected th:text="${reservation.room.roomNumber}"></option>
-                            <th:block th:each="room : ${rooms}">
-                                <option th:value="${room.roomNumber}" th:text="${room.roomNumber}"></option>
-                            </th:block>
-                        </select>
                     </div>
 
                     <input name="room" th:value="${reservation.room.roomNumber}" type="hidden" th:if="${user.loyalty < T(com.hotel.reservation.type.UserLoyaltyType).Platinum}" />
@@ -68,6 +36,7 @@
                         <label for="checkOutTime">Check Out Time</label>
                         <input type="text" name="checkOutTime" class="single-input date-time" id="checkOutTime" th:value="${#dates.format(reservation.checkOutTime, 'yyyy-MM-dd HH:mm')}">
                     </div>
+
                     <div class="form-group row mt-10">
                         <p th:if="${user.loyalty < T(com.hotel.reservation.type.UserLoyaltyType).Gold}">
                             Your current loyalty status allows you to check in after 4PM and check out before 12PM. <br>
@@ -77,9 +46,50 @@
                             Your current loyalty status allows you to check in after 12PM and check out before 4PM.
                         </p>
                     </div>
+
+                    <div class="form-group row mt-10 default-select" th:if="${user.loyalty >= T(com.hotel.reservation.type.UserLoyaltyType).Platinum}" style="height: 72px">
+                        <label for="room"> Room Number</label>
+                        <select name="room" id="room" class="form-select">
+                            <option selected th:text="${reservation.room.roomNumber}"></option>
+                            <th:block th:each="room : ${rooms}">
+                                <option th:value="${room.roomNumber}" th:text="${room.roomNumber}"></option>
+                            </th:block>
+                        </select>
+
+                        <script type="text/javascript">
+                            function checkRoomAvailability() {
+                                $.ajax({
+                                    type: 'GET',
+                                    url: '/reservation/roomAvailabilityQuery',
+                                    data: {
+                                        "checkInTime": $("#checkInTime").val(),
+                                        "checkOutTime": $("#checkOutTime").val(),
+                                        "type": $("#roomType").val()
+                                    },
+                                    success: function (data) {
+                                        if (data.error) {
+                                            alert(data.error)
+                                        } else {
+                                            $("#room").html('');
+                                            $.each(data.rooms, function (k, v) {
+                                                $("#room").append(
+                                                    $("<option />").text(v).val(v)
+                                                );
+                                            })
+
+                                            $('.nice-select').remove();
+                                            $('select').niceSelect();
+                                        }
+                                    }
+                                })
+                            }
+
+                            $("#checkInTime, #checkOutTime").on('change', checkRoomAvailability);
+                        </script>
+                    </div>
+
                     <div class="form-group row mt-10">
                         <button type="submit" class="genric-btn info">Change Reservation</button>
-                        <button type="button" value="check" onclick="roomAvailability();" />
                     </div>
                 </form>
             </div>
