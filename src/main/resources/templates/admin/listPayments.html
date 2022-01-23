@@ -11,8 +11,7 @@
         <div th:if="${information}" class="alert-info info-border" role="alert" th:text="${information}"></div>
         <form class="form-inline" role="search" action="/admin/payment" method="get">
             <div class="form-group">
-                <label for="reservation">reservation ID</label>
-                <input id="reservation" name="reservation" class="form-control mr-sm-2" type="text" placeholder="Reservation" th:value="${#request.getParameter('reservation')}">
+                <input id="reservation" name="reservation" class="form-control mr-sm-2" type="text" placeholder="Reservation ID" th:value="${#request.getParameter('reservation')}">
             </div>
             <div class="form-group">
                 <select class="form-control" name="paymentStatusType">
