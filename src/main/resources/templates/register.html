@@ -36,6 +36,9 @@
                         <label for="password">Password</label>
                         <input type="password" name="password" class="single-input" id="password" th:field="*{password}" placeholder="Password">
                     </div>
+
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                     <div class="form-group row mt-10">
                         <button type="submit" value="Register" class="genric-btn info">Register</button>
                     </div>

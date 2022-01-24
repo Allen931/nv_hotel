@@ -15,9 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
-        http.csrf().disable()
-        http.headers().frameOptions().disable()
-
         http
             .authorizeRequests()
             .anyRequest().permitAll()
